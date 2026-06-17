@@ -1,0 +1,654 @@
+/* LightWork.css */
+* {
+  box-sizing: border-box;
+}
+
+.light-work-page {
+  background: #F3F3F3;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header — floats above canvas, no background */
+.room-header {
+  position: fixed;
+  top: 15px;
+  left: 24px;
+  right: 60px;
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.room-title {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: clamp(16px, 1.53vw, 22px);
+  color: #000;
+  white-space: nowrap;
+}
+
+.room-description {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: clamp(14px, 1.39vw, 20px);
+  color: #000;
+  line-height: 1.3;
+}
+
+/* Online count — floats above canvas, top-right */
+.room-online {
+  position: fixed;
+  top: 15px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.online-star {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: 20px;
+  color: inherit;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.online-label {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: clamp(14px, 1.39vw, 20px);
+  color: #000;
+}
+
+/* Canvas area — full page */
+.room-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.room-canvas-inner {
+  position: relative;
+  width: 1650px;
+  height: 1150px;
+  transform-origin: top left;
+  will-change: transform;
+}
+
+/* Window wrapper — positioned on canvas, holds username + shape */
+.window-wrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: grab;
+  gap: 2px;
+  touch-action: none;
+}
+
+.window-wrapper:active {
+  cursor: grabbing;
+}
+
+.window-username {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  color: #000;
+  white-space: nowrap;
+  height: 28px;
+  line-height: 28px;
+  flex-shrink: 0;
+}
+
+.username-center {
+  align-self: center;
+}
+
+.username-right {
+  align-self: flex-end;
+}
+
+/* The actual window shape */
+.user-window {
+  background: #F3F3F3;
+  flex-shrink: 0;
+  box-shadow:
+    0 0 6px rgba(180, 180, 182, 0.25),
+    0 0 15px rgba(180, 180, 182, 0.15),
+    0 0 30px rgba(180, 180, 182, 0.08);
+}
+
+.rect-window {
+  border-radius: 2px;
+  position: relative;
+  --dash-color: #000;
+}
+
+.circle-window {
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.window-content {
+  position: absolute;
+  inset: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.circle-window .window-content {
+  inset: 30px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.window-image {
+  width: 45%;
+  flex-shrink: 0;
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+
+.window-text {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  color: #000;
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.window-delete {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.window-delete:hover {
+  color: #000;
+}
+
+/* Create window button */
+.create-window-btn {
+  position: fixed;
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  right: calc(30px + env(safe-area-inset-right, 0px));
+  background: none;
+  border: none;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  z-index: 50;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-modal {
+  background: #fff;
+  padding: 24px 28px;
+  width: 420px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.12);
+}
+
+.modal-title {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: 15px;
+  color: #000;
+  margin: 0 0 12px 0;
+  line-height: 1.2;
+}
+
+.modal-title-nick {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+}
+
+.shape-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.shape-label {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.shape-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.draft-text-wrap {
+  position: relative;
+  height: 99px;
+}
+
+.draft-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+  color: #000;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  padding: 0;
+  line-height: 33px;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.draft-text::placeholder {
+  color: #aaa;
+}
+
+.modal-lines {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.note-line-row {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modal-divider {
+  border: none;
+  border-top: 0.5px dashed #000;
+  margin: 0;
+  width: 100%;
+}
+
+.image-upload-area {
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 18px;
+  justify-content: center;
+  cursor: pointer;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-size: 12px;
+  color: #aaa;
+  position: relative;
+}
+
+.draft-image-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.modal-cancel,
+.modal-submit {
+  background: none;
+  border: none;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-cancel {
+  color: #777;
+}
+
+.modal-submit {
+  color: #000;
+}
+
+/* Home button */
+.home-btn {
+  position: fixed;
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  left: 24px;
+  z-index: 50;
+  cursor: pointer;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: #000;
+}
+
+.light-work-page.dark-mode .home-btn {
+  color: #F3F3F3;
+}
+
+/* Mode toggle */
+.mode-toggle {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+}
+
+.mode-toggle svg {
+  display: block;
+  transition: filter 0.3s ease;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+}
+
+.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .moon { display: none; }
+
+.mode-toggle svg.dark {
+  filter: drop-shadow(0 0 5px rgba(243, 243, 243, 0.5));
+}
+
+.mode-toggle svg.dark .sun { display: none; }
+.mode-toggle svg.dark .moon {
+  stroke: rgba(243, 243, 243, 0.85);
+  display: block;
+}
+
+/* Dark mode */
+.light-work-page.dark-mode {
+  background: #3D3D3F;
+}
+
+.light-work-page.dark-mode .room-title,
+.light-work-page.dark-mode .room-description,
+.light-work-page.dark-mode .online-label {
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .user-window {
+  background: #3D3D3F;
+  box-shadow:
+    0 0 10px rgba(247, 248, 228, 0.06),
+    0 0 20px rgba(247, 248, 228, 0.045),
+    0 0 35px rgba(247, 248, 228, 0.1);
+}
+
+.light-work-page.dark-mode .rect-window {
+  --dash-color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .circle-window-wrap {
+  --dash-color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .online-star {
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .window-username {
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .window-text {
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .create-window-btn {
+  border-color: #888;
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .create-modal {
+  background: #4a4a4c;
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
+}
+
+.light-work-page.dark-mode .modal-title,
+.light-work-page.dark-mode .modal-title-nick,
+.light-work-page.dark-mode .shape-label,
+.light-work-page.dark-mode .modal-submit,
+.light-work-page.dark-mode .draft-text {
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .modal-cancel {
+  color: #aaa;
+}
+
+.light-work-page.dark-mode .draft-text::placeholder {
+  color: #888;
+}
+
+.light-work-page.dark-mode .draft-text-wrap {
+  --dash-color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .modal-divider {
+  border-top-color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .image-upload-area {
+  color: #888;
+}
+
+
+@media (max-width: 768px) {
+  .room-header {
+    gap: 16px;
+    right: 50px;
+    padding-right: 0;
+  }
+
+  .room-title {
+    font-size: 18px;
+  }
+
+  .room-description {
+    font-size: 18px;
+  }
+
+  .room-online {
+    right: 16px;
+  }
+
+  .create-window-btn {
+    font-size: 14px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .home-btn {
+    font-size: 14px;
+    bottom: 20px;
+    left: 16px;
+  }
+
+  .create-modal {
+    width: calc(100vw - 32px);
+    padding: 24px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .room-header {
+    flex-direction: column;
+    gap: 4px;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    left: 14px;
+    right: 44px;
+  }
+
+  .room-title {
+    font-size: 18px;
+  }
+
+  .room-description {
+    font-size: 14px;
+  }
+
+  .room-online {
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: 14px;
+  }
+
+  .mode-toggle {
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    transform: none;
+  }
+
+  .mode-toggle svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .create-window-btn {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    right: calc(20px + env(safe-area-inset-right, 0px));
+    font-size: 13px;
+  }
+
+  .home-btn {
+    font-size: 13px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: calc(14px + env(safe-area-inset-left, 0px));
+  }
+
+  .create-modal {
+    width: calc(100vw - 24px);
+    padding: 20px;
+    /* Scale the whole popup down uniformly on mobile */
+    transform: scale(0.65);
+    transform-origin: center;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .image-upload-area {
+    height: 160px;
+  }
+}
+
+@media (max-height: 600px) {
+  .room-header {
+    top: 12px;
+  }
+
+  .room-online {
+    top: 50px;
+  }
+
+  .create-window-btn {
+    bottom: 12px;
+  }
+}
+
+/* ── Mobile canvas layout (≤480px) ──────────────────────── */
+.room-mobile-scroll {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .light-work-page {
+    overflow: hidden;
+  }
+
+  /* Same free-drag canvas as desktop, but 1:1 — cards are pre-sized for the
+     phone via MOBILE_GEO, so no scaling is applied. */
+  .room-canvas-inner {
+    width: 100%;
+    height: 100%;
+    transform: none !important;
+  }
+
+  /* Online count would sit on top of the mode toggle on a phone */
+  .room-online {
+    display: none;
+  }
+
+  .window-username {
+    font-size: 12px;
+    height: 22px;
+    line-height: 22px;
+  }
+
+  .window-text {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .window-content {
+    inset: 12px;
+    gap: 8px;
+  }
+
+  .circle-window .window-content {
+    inset: 20px;
+  }
+}

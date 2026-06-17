@@ -1,0 +1,433 @@
+/* Scribble.css */
+.scribble-page {
+  background: #F3F3F3;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  position: relative;
+  overflow: hidden;
+}
+
+.scribble-header {
+  position: fixed;
+  top: 15px;
+  left: 24px;
+  right: 60px;
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.scribble-title {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: clamp(16px, 1.53vw, 22px);
+  color: #000;
+  white-space: nowrap;
+}
+
+.scribble-description {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: clamp(14px, 1.39vw, 20px);
+  color: #000;
+  line-height: 1.3;
+}
+
+/* Drawn count — floats above canvas, top-right */
+.scribble-online {
+  position: fixed;
+  top: 15px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.online-star {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: 20px;
+  color: inherit;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.online-label {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: clamp(14px, 1.39vw, 20px);
+  color: #000;
+}
+
+.scribble-page.dark-mode .online-star,
+.scribble-page.dark-mode .online-label {
+  color: #F3F3F3;
+}
+
+/* Canvas frame — nearly fills the screen, but stays clear of the header,
+   online count, toolbar, and mode toggle */
+.scribble-canvas-frame {
+  position: absolute;
+  top: 110px;
+  bottom: 130px;
+  left: 90px;
+  right: 90px;
+  --dash-color: #000;
+}
+
+.scribble-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* Toolbar */
+.scribble-toolbar {
+  position: fixed;
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  right: calc(110px + env(safe-area-inset-right, 0px));
+  display: flex;
+  align-items: flex-end;
+  gap: 48px;
+  z-index: 50;
+}
+
+/* Pen group: slider + blobs stacked */
+.scribble-pen-group,
+.scribble-erase-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.scribble-colors {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Range slider */
+.scribble-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 207px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.5);
+  outline: none;
+  border: none;
+  cursor: pointer;
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.scribble-slider--erase {
+  width: 80px;
+}
+
+.scribble-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #F3F3F3;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.scribble-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #F3F3F3;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* Pen blob color buttons */
+.pen-blob-btn {
+  width: 21px;
+  height: 17px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: transform 0.1s ease;
+  flex-shrink: 0;
+}
+
+.pen-blob-btn.active {
+  transform: scale(1.2);
+}
+
+/* Erase button */
+.scribble-erase-btn {
+  background: none;
+  border: none;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: block;
+}
+
+/* Home button */
+.home-btn {
+  position: fixed;
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  left: 24px;
+  z-index: 50;
+  cursor: pointer;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: #000;
+}
+
+.scribble-page.dark-mode .home-btn {
+  color: #F3F3F3;
+}
+
+/* Mode toggle */
+.mode-toggle {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+}
+
+.mode-toggle svg {
+  display: block;
+  transition: filter 0.3s ease;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+}
+
+.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .moon { display: none; }
+
+.mode-toggle svg.dark {
+  filter: drop-shadow(0 0 5px rgba(243, 243, 243, 0.5));
+}
+
+.mode-toggle svg.dark .sun { display: none; }
+.mode-toggle svg.dark .moon {
+  stroke: rgba(243, 243, 243, 0.85);
+  display: block;
+}
+
+/* Dark mode */
+.scribble-page.dark-mode {
+  background: #3D3D3F;
+}
+
+.scribble-page.dark-mode .scribble-title,
+.scribble-page.dark-mode .scribble-description {
+  color: #F3F3F3;
+}
+
+.scribble-page.dark-mode .scribble-canvas-frame {
+  --dash-color: #F3F3F3;
+}
+
+.scribble-page.dark-mode .scribble-slider {
+  background: rgba(243, 243, 243, 0.5);
+}
+
+.scribble-page.dark-mode .scribble-slider::-webkit-slider-thumb {
+  background: #3D3D3F;
+  border-color: rgba(243, 243, 243, 0.5);
+}
+
+.scribble-page.dark-mode .scribble-slider::-moz-range-thumb {
+  background: #3D3D3F;
+  border-color: rgba(243, 243, 243, 0.5);
+}
+
+.scribble-page.dark-mode .scribble-erase-btn {
+  color: #F3F3F3;
+}
+
+
+.scribble-title,
+.scribble-description {
+      text-shadow:
+      0 0 6px rgba(255, 255, 255, 1),
+      0 0 15px rgba(255, 255, 255, 1),
+      0 0 30px rgba(255, 255, 255, 0.95),
+      0 0 60px rgba(255, 255, 255, 0.8),
+      0 0 100px rgba(255, 255, 255, 0.5);
+}
+.scribble-page.dark-mode .scribble-title,
+.scribble-page.dark-mode .scribble-description {
+      text-shadow:
+      0 0 10px rgba(243, 243, 243, 0.12),
+      0 0 20px rgba(243, 243, 243, 0.1),
+      0 0 35px rgba(160, 160, 165, 0.2);
+}
+
+@media (max-width: 768px) {
+  .scribble-header {
+    gap: 16px;
+    right: 50px;
+  }
+
+  .scribble-title {
+    font-size: 18px;
+  }
+
+  .scribble-description {
+    font-size: 18px;
+  }
+
+  .scribble-toolbar {
+    gap: 28px;
+    right: calc(50px + env(safe-area-inset-right, 0px));
+  }
+
+  .scribble-slider {
+    width: 160px;
+  }
+
+  .scribble-slider--erase {
+    width: 80px;
+  }
+
+  .pen-blob-btn {
+    width: 18px;
+    height: 15px;
+  }
+
+  .scribble-online {
+    right: 16px;
+  }
+
+  .scribble-canvas-frame {
+    top: 120px;
+    bottom: 140px;
+    left: 70px;
+    right: 70px;
+  }
+
+  .home-btn {
+    font-size: 14px;
+    bottom: 20px;
+    left: 16px;
+  }
+
+  /* erase matches the back button size */
+  .scribble-erase-btn {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scribble-header {
+    flex-direction: column;
+    gap: 4px;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    left: 14px;
+    right: 44px;
+  }
+
+  .scribble-title {
+    font-size: 18px;
+  }
+
+  .scribble-description {
+    font-size: 14px;
+  }
+
+  .scribble-toolbar {
+    gap: 18px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    right: calc(20px + env(safe-area-inset-right, 0px));
+  }
+
+  .scribble-slider {
+    width: 120px;
+  }
+
+  .scribble-slider--erase {
+    width: 46px;
+  }
+
+  .pen-blob-btn {
+    width: 12px;
+    height: 10px;
+  }
+
+  /* Match the "erase" text height (13px) so the palette row and the erase
+     button sit on the same line, while the two sliders above also align
+     (both groups become the same total height). */
+  .scribble-colors {
+    gap: 6px;
+    height: 13px;
+  }
+
+  /* erase matches the back button size on mobile */
+  .scribble-erase-btn {
+    font-size: 13px;
+  }
+
+  .mode-toggle {
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    transform: none;
+  }
+
+  .mode-toggle svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .scribble-online {
+    top: calc(46px + env(safe-area-inset-top, 0px));
+    right: 14px;
+  }
+
+  .scribble-online .online-star,
+  .scribble-online .online-label {
+    font-size: 14px;
+  }
+
+  .scribble-preview-image {
+    max-width: 85vw;
+  }
+
+  .scribble-canvas-frame {
+    top: calc(110px + env(safe-area-inset-top, 0px));
+    bottom: calc(170px + env(safe-area-inset-bottom, 0px));
+    left: 14px;
+    right: 14px;
+  }
+
+  .home-btn {
+    font-size: 13px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: calc(14px + env(safe-area-inset-left, 0px));
+  }
+}

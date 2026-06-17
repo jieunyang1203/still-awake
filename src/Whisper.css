@@ -1,0 +1,328 @@
+/* Archive.css */
+
+.whisper-area {
+  position: absolute;
+  top: 70px;
+  left: 24px;
+  z-index: 10;
+}
+
+.whisper-input-wrap {
+  position: relative;
+  display: inline-block;
+  --dash-color: #000;
+}
+
+.whisper-input {
+  width: 380px;
+  height: 26px;
+  background: #F3F3F3;
+  border: none;
+  outline: none;
+  padding: 0 12px 0 6px;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  color: #000;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Center: stays put, drops a small amount like a raindrop, fades out
+   before any real travel — the landing spot fades in separately, unconnected */
+@keyframes whisper-char-fall {
+  0%   { opacity: 0;    transform: translateY(0); }
+  10%  { opacity: 0.5;  transform: translateY(4px); }
+  100% { opacity: 0;    transform: translateY(40px); }
+}
+
+.whisper-falling-char {
+  position: fixed;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 10;
+  animation-name: whisper-char-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+/* Bottom: each char fades in with random delay */
+@keyframes whisper-land-in {
+  from { opacity: 0; }
+  to   { opacity: 0.3; }
+}
+
+.whisper-landed-char {
+  position: fixed;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 1;
+  animation: whisper-land-in 0.4s ease-out forwards;
+}
+
+.archive-page.dark-mode .whisper-input-wrap {
+  --dash-color: #F3F3F3;
+}
+
+.archive-page.dark-mode .whisper-input {
+  background: #3D3D3F;
+  color: #F3F3F3;
+}
+
+.archive-page {
+  background: #F3F3F3;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  position: relative;
+}
+
+.archive-header {
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  padding: 15px 24px 0 24px;
+  position: relative;
+  z-index: 10;
+}
+
+.archive-title {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: clamp(16px, 1.53vw, 22px);
+  color: #000;
+  white-space: nowrap;
+}
+
+.archive-description {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: clamp(14px, 1.39vw, 20px);
+  color: #000;
+  line-height: 1.3;
+}
+
+/* Written count — floats above canvas, top-right */
+.archive-online {
+  position: fixed;
+  top: 15px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.online-star {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: 20px;
+  color: inherit;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.online-label {
+  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-weight: 200;
+  font-size: clamp(14px, 1.39vw, 20px);
+  color: #000;
+}
+
+.archive-page.dark-mode .online-star,
+.archive-page.dark-mode .online-label {
+  color: #F3F3F3;
+}
+
+/* Home button */
+.home-btn {
+  position: fixed;
+  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  left: 24px;
+  z-index: 50;
+  cursor: pointer;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: #000;
+}
+
+.archive-page.dark-mode .home-btn {
+  color: #F3F3F3;
+}
+
+/* Mode toggle */
+.mode-toggle {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+}
+
+.mode-toggle svg {
+  display: block;
+  transition: filter 0.3s ease;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+}
+
+.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .moon { display: none; }
+
+.mode-toggle svg.dark {
+  filter: drop-shadow(0 0 5px rgba(243, 243, 243, 0.5));
+}
+
+.mode-toggle svg.dark .sun { display: none; }
+.mode-toggle svg.dark .moon {
+  stroke: rgba(243, 243, 243, 0.85);
+  display: block;
+}
+
+/* Dark mode */
+.archive-page.dark-mode {
+  background: #3D3D3F;
+}
+
+.archive-page.dark-mode .archive-title,
+.archive-page.dark-mode .archive-description {
+  color: #F3F3F3;
+}
+
+.archive-title,
+.archive-description {
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 1),
+    0 0 15px rgba(255, 255, 255, 1),
+    0 0 30px rgba(255, 255, 255, 0.95),
+    0 0 60px rgba(255, 255, 255, 0.8),
+    0 0 100px rgba(255, 255, 255, 0.5);
+}
+
+.archive-page.dark-mode .archive-title,
+.archive-page.dark-mode .archive-description {
+  text-shadow:
+    0 0 10px rgba(243, 243, 243, 0.12),
+    0 0 20px rgba(243, 243, 243, 0.1),
+    0 0 35px rgba(160, 160, 165, 0.2);
+}
+
+@media (max-width: 768px) {
+  .archive-header {
+    gap: 16px;
+    padding: 14px 16px 0 16px;
+  }
+
+  .archive-title {
+    font-size: 18px;
+  }
+
+  .archive-description {
+    font-size: 16px;
+  }
+
+  .whisper-area {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin: 12px 0 0 16px;
+  }
+
+  .whisper-input-wrap,
+  .whisper-input {
+    width: min(380px, calc(100vw - 32px));
+  }
+
+  .archive-online {
+    right: 16px;
+  }
+
+  .home-btn {
+    font-size: 14px;
+    bottom: 20px;
+    left: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .archive-header {
+    flex-direction: column;
+    gap: 6px;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 0 14px;
+  }
+
+  .archive-description {
+    font-size: 14px;
+    max-width: 70vw;
+  }
+
+  .mode-toggle {
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    transform: none;
+  }
+
+  .mode-toggle svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .whisper-area {
+    margin-left: 14px;
+    margin-top: 22px;
+  }
+
+  /* Layout width is larger so the 0.8 scale below lands at the intended
+     visual width (~0.6 of the viewport). */
+  .whisper-input-wrap,
+  .whisper-input {
+    width: calc((100vw - 28px) * 0.75);
+  }
+
+  /* Keep the real font-size at 16px so iOS Safari doesn't auto-zoom on
+     focus; shrink the whole field (border + text) visually via transform. */
+  .whisper-input {
+    height: 26px;
+    font-size: 16px;
+  }
+
+  .whisper-input-wrap {
+    transform: scale(0.8);
+    transform-origin: top left;
+  }
+
+  /* Floating (center) + landed (bottom) chars are spans, not inputs —
+     no zoom concern, so just size them down directly. */
+  .whisper-falling-char,
+  .whisper-landed-char {
+    font-size: 13px;
+  }
+
+  .archive-online {
+    top: calc(46px + env(safe-area-inset-top, 0px));
+    right: 14px;
+  }
+
+  .online-star,
+  .online-label {
+    font-size: 14px;
+  }
+
+  .home-btn {
+    font-size: 13px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: calc(14px + env(safe-area-inset-left, 0px));
+  }
+}

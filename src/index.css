@@ -1,0 +1,61 @@
+/* All font declarations live here so they load at the earliest possible moment */
+
+@font-face {
+  font-family: 'SeasonSans';
+  src: url('/fonts/SeasonSans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dotline';
+  src: url('./fonts/Dotline-LA7g.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PPEditorialNew';
+  src: url('/fonts/PPEditorialNew-Ultralight.woff2') format('woff2');
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JSoye';
+  src: url('/fonts/JSoye-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+
+/* Korean overrides — must come after the base declarations */
+@font-face {
+  font-family: 'SeasonSans';
+  src: url('/fonts/JSoye-Light.woff2') format('woff2');
+  font-weight: 300;
+  unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PPEditorialNew';
+  src: url('/fonts/JSoye-Light.woff2') format('woff2');
+  font-weight: 200;
+  unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'SeasonSans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #F3F3F3;
+}

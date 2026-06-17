@@ -1,0 +1,360 @@
+/* App.css */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  body {
+    font-family: 'SeasonSans', -apple-system, sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+  
+  .container {
+    width: 100%;
+    padding: 20px;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .landing-description {
+    position: fixed;
+    top: clamp(8px, 1vw, 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - clamp(16px, 2.8vw, 40px)) !important;
+    max-width: none !important;
+    z-index: 1;
+    pointer-events: none;
+    margin: 0;
+  }
+
+  .landing-bottom-left {
+    position: fixed;
+    bottom: clamp(8px, 1vw, 15px);
+    left: clamp(8px, 1.7vw, 24px);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .landing-bottom-left.text-base-layer {
+    z-index: 11;
+  }
+
+  .landing-bottom-left.nickname-layer {
+    z-index: 12;
+  }
+
+  .landing-bottom-right {
+    position: fixed;
+    bottom: clamp(8px, 1vw, 15px);
+    right: clamp(8px, 1.7vw, 24px);
+    z-index: 10;
+  }
+
+  .nav-workspace {
+    font-size: 20px;
+    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-weight: 200;
+    color: #000000;
+    cursor: pointer;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.9),
+      0 0 12px rgba(243,243,243,0.5),
+      0 0 24px rgba(243,243,243,0.25);
+  }
+
+  .nav-time {
+    font-size: 20px;
+    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-weight: 200;
+    color: #000000;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.9),
+      0 0 12px rgba(243,243,243,0.5),
+      0 0 24px rgba(243,243,243,0.25);
+  }
+
+  .description {
+    text-align: left;
+    font-size: clamp(13px, 1.67vw, 24px);
+    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-weight: 200;
+    line-height: 1.45;
+    color: #000000;
+    width: 100%;
+    max-width: none;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.9),
+      0 0 12px rgba(243,243,243,0.5),
+      0 0 24px rgba(243,243,243,0.25);
+  }
+
+
+  .clock-container {
+    position: relative;
+    width: min(96vw, 96vh);
+    height: min(96vw, 96vh);
+    z-index: 100;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: pointer;
+  }
+
+  .clock-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+.clock-canvas canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    image-rendering: auto;
+  }
+
+  .nickname-box {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    width: fit-content;
+  }
+
+  .tonight-label {
+    font-size: 20px;
+    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-weight: 200;
+    color: #000;
+    white-space: nowrap;
+    margin-right: 4px;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.9),
+      0 0 12px rgba(243,243,243,0.5),
+      0 0 24px rgba(243,243,243,0.25);
+  }
+
+  .nickname-sizer {
+    display: inline-grid;
+    align-items: center;
+    overflow: visible;
+  }
+
+  .nickname-sizer::after {
+    content: attr(data-value);
+    visibility: hidden;
+    white-space: pre;
+    font-size: 17px;
+    font-family: 'SeasonSans', -apple-system, sans-serif;
+    font-weight: 300;
+    grid-area: 1 / 1;
+    padding: 0 4px 2px 12px;
+  }
+
+  .nickname-input {
+    font-size: 17px;
+    font-family: 'SeasonSans', -apple-system, sans-serif;
+    font-weight: 300;
+    color: #888;
+    background: transparent;
+    border: none;
+    border-bottom: none;
+    outline: none;
+    width: 100%;
+    min-width: 1px;
+    grid-area: 1 / 1;
+    padding: 0 4px 2px 12px;
+    margin: 0;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .nickname-input::placeholder {
+    color: #aaa;
+  }
+
+
+  /* App page base */
+  .app-page {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Light background as a fixed layer — Chrome handles fixed layers
+     more efficiently on resize than a painted background on the page root */
+  .app-bg-light {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(to bottom, #BDDDFE 0%, #F3F3F3 25%);
+    pointer-events: none;
+    z-index: 0;
+    transform: translateZ(0);
+  }
+
+  @keyframes text-base-fade {
+    0%   { opacity: 1; }
+    20%  { opacity: 1; animation-timing-function: ease-in; }
+    33%  { opacity: 0; animation-timing-function: linear; }
+    67%  { opacity: 0; animation-timing-function: ease-out; }
+    80%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  .text-base-layer {
+    animation: text-base-fade 33s linear infinite;
+    will-change: opacity;
+  }
+
+  @keyframes text-white-fade {
+    0%   { opacity: 0; }
+    20%  { opacity: 0; animation-timing-function: ease-in; }
+    33%  { opacity: 1; animation-timing-function: linear; }
+    67%  { opacity: 1; animation-timing-function: ease-out; }
+    80%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .text-white-layer {
+    color: #F3F3F3 !important;
+    opacity: 0;
+    pointer-events: none !important;
+    animation: text-white-fade 33s linear infinite;
+    will-change: opacity;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.7),
+      0 0 12px rgba(243,243,243,0.35) !important;
+  }
+
+  .text-white-layer *,
+  .text-white-layer .nav-workspace {
+    color: #F3F3F3 !important;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.7),
+      0 0 12px rgba(243,243,243,0.35) !important;
+  }
+
+  @keyframes bg-oscillate {
+    0%   { opacity: 0; }
+    20%  { opacity: 0; animation-timing-function: ease-in; }
+    33%  { opacity: 1; animation-timing-function: linear; }
+    67%  { opacity: 1; animation-timing-function: ease-out; }
+    80%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .app-bg-dark {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #3D3D3F 0%, #A0A0A5 60%);
+    pointer-events: none;
+    z-index: 0;
+    will-change: opacity;
+    animation: bg-oscillate 33s linear infinite;
+  }
+
+  .app-page .nav-workspace,
+  .app-page .nav-time,
+  .app-page .description,
+  .app-page .tonight-label {
+    color: #000000;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.9),
+      0 0 12px rgba(243,243,243,0.5),
+      0 0 24px rgba(243,243,243,0.25);
+  }
+
+  .app-page .nickname-input {
+    color: #888888;
+  }
+
+  .app-page .nickname-input::placeholder {
+    color: #aaa;
+  }
+
+@media (max-width: 480px) {
+  .clock-container {
+    width: 175vw;
+    height: 175vw;
+    transform: translateX(-48vw);
+  }
+
+  .time-prefix {
+    display: none;
+  }
+
+  .landing-bottom-left {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .landing-bottom-right {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .nav-workspace,
+  .nav-time,
+  .tonight-label {
+    font-size: 15px;
+  }
+
+  .nickname-input,
+  .nickname-sizer::after {
+    font-size: 13px;
+  }
+
+  /* Tighten the gap between "↘ tonight, you are:" and the input on mobile */
+  .nickname-box {
+    gap: 2px;
+  }
+
+  .tonight-label {
+    margin-right: 2px;
+  }
+
+  .nickname-input,
+  .nickname-sizer::after {
+    padding: 0 2px 2px 2px;
+  }
+}
+
+/* Compact phones (iPhone SE, mini — ≤375px) */
+@media (max-width: 375px) {
+  .clock-container {
+    width: 170vw;
+    height: 170vw;
+    transform: translateX(-46vw);
+  }
+
+  .nav-workspace,
+  .nav-time,
+  .tonight-label,
+  .description {
+    font-size: 13px;
+  }
+
+  .nickname-input,
+  .nickname-sizer::after {
+    font-size: 12px;
+  }
+}
+
