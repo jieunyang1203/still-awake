@@ -60,14 +60,18 @@ body {
   background: #F3F3F3;
 }
 
-/* Every screen is sized to the viewport — lock the document so nothing
-   scrolls or rubber-bands. This keeps fixed backgrounds (grain, gradient,
-   color animation) pinned and filling the device, and stops flow content
-   (e.g. the greeting) from drifting while fixed UI stays put.
-   The Room provides its own internal scroll when needed. */
-html,
-body {
+html {
   height: 100%;
+}
+
+/* Lock scrolling so nothing rubber-bands — but DON'T use html{overflow:hidden},
+   which on iOS clips fixed full-screen layers out of the status-bar /
+   home-indicator safe areas. Pinning body with position:fixed + inset:0 locks
+   the page AND makes body cover the entire device (safe areas included), so its
+   background fills those strips too. */
+body {
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -76,9 +80,14 @@ body {
   height: 100%;
 }
 
-/* The body background propagates to the whole viewport canvas (incl. the iOS
-   status-bar / safe-area region). Keep it in sync with dark mode so the top
-   of the screen never shows a light "cut" behind the page. */
+/* body covers the whole device (incl. iOS safe areas) and Safari can tint the
+   status bar from its background — keep it in sync with each screen. */
 body.dark-mode {
   background: #3D3D3F;
+}
+
+/* Landing: match the light gradient so the safe-area strips (status bar /
+   home indicator) blend with the page instead of showing a flat band. */
+body.landing {
+  background: linear-gradient(to bottom, #BDDDFE 0%, #F3F3F3 25%);
 }

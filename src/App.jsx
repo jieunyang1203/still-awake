@@ -149,8 +149,13 @@ function App() {
     };
   }, []);
 
-  // Landing is always the light gradient — clear any dark backdrop left on body
-  useEffect(() => { document.body.classList.remove('dark-mode'); }, []);
+  // Landing is always the light gradient — clear any dark backdrop and tag the
+  // body so its background (which fills the iOS safe areas) matches the gradient.
+  useEffect(() => {
+    document.body.classList.remove('dark-mode');
+    document.body.classList.add('landing');
+    return () => document.body.classList.remove('landing');
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
