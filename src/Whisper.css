@@ -260,11 +260,11 @@
   .archive-header {
     flex-direction: column;
     gap: 6px;
-    padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 0 14px;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 0 16px;
   }
 
   .archive-description {
-    font-size: 14px;
+    font-size: 16px;
     max-width: 70vw;
   }
 
@@ -281,7 +281,7 @@
   }
 
   .whisper-area {
-    margin-left: 14px;
+    margin-left: 16px;
     margin-top: 22px;
   }
 
@@ -296,7 +296,7 @@
      focus; shrink the whole field (border + text) visually via transform. */
   .whisper-input {
     height: 26px;
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .whisper-input-wrap {
@@ -308,21 +308,21 @@
      no zoom concern, so just size them down directly. */
   .whisper-falling-char,
   .whisper-landed-char {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .archive-online {
     top: calc(46px + env(safe-area-inset-top, 0px));
-    right: 14px;
+    right: 16px;
   }
 
   .online-star,
   .online-label {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .home-btn {
-    font-size: 13px;
+    font-size: 15px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: calc(14px + env(safe-area-inset-left, 0px));
   }

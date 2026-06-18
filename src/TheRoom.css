@@ -222,51 +222,78 @@
   justify-content: center;
 }
 
+/* House-shaped card — memo.svg (light) / memo2.svg (dark) as the background,
+   each with its own colours (set inline based on dark mode). */
 .create-modal {
-  background: #fff;
-  padding: 24px 28px;
-  width: 420px;
-  border-radius: 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
   position: relative;
-  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.12);
+  width: 528px;
+  aspect-ratio: 196.75 / 158.94;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* ink for the HTML text/shape outlines that overlay the SVG */
+  --memo-stroke: #000;
+  --memo-ink: #000;
+  --memo-ink-soft: #aaa;
 }
 
+.light-work-page.dark-mode .create-modal {
+  --memo-stroke: #F3F3F3;
+  --memo-ink: #F3F3F3;
+  --memo-ink-soft: rgba(243, 243, 243, 0.5);
+}
+
+.shape-outline {
+  fill: none;
+  stroke: var(--memo-stroke);
+}
+
+/* "share something, <nick>" runs along the right roof line (~22°) */
 .modal-title {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
-  font-weight: 200;
-  font-size: 15px;
-  color: #000;
-  margin: 0 0 12px 0;
-  line-height: 1.2;
-}
-
-.modal-title-nick {
+  position: absolute;
+  top: 27%;
+  right: 12%;
+  margin: 0;
+  transform-origin: right center;
+  transform: rotate(22deg);
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
+  font-size: 15px;
+  color: var(--memo-ink);
+  white-space: nowrap;
+}
+
+/* Everything else lives inside the house body (inner box of memo.svg) */
+.modal-body {
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  top: 33%;
+  bottom: 6.5%;
+  display: flex;
+  flex-direction: column;
 }
 
 .shape-picker {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 4px;
+  margin-bottom: 16px;
 }
 
 .shape-label {
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: 12px;
-  color: #000;
+  font-size: 13px;
+  color: var(--memo-ink);
   white-space: nowrap;
+  margin-right: 6px;
 }
 
 .shape-btn {
   background: none;
   border: none;
-  padding: 8px;
+  padding: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -275,7 +302,8 @@
 
 .draft-text-wrap {
   position: relative;
-  height: 99px;
+  height: 56px;
+  flex-shrink: 0;
 }
 
 .draft-text {
@@ -285,21 +313,21 @@
   height: 100%;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: 12px;
-  color: #000;
+  font-size: 13px;
+  color: var(--memo-ink);
   border: none;
   outline: none;
   resize: none;
   background: transparent;
   padding: 0;
-  line-height: 33px;
+  line-height: 28px;
   box-sizing: border-box;
   overflow: hidden;
   z-index: 1;
 }
 
 .draft-text::placeholder {
-  color: #aaa;
+  color: var(--memo-ink-soft);
 }
 
 .modal-lines {
@@ -319,21 +347,21 @@
 
 .modal-divider {
   border: none;
-  border-top: 0.5px dashed #000;
+  border-top: 0.5px dashed var(--memo-stroke);
   margin: 0;
   width: 100%;
 }
 
 .image-upload-area {
-  height: 150px;
+  flex: 1;
+  min-height: 0;
   display: flex;
-  align-items: flex-end;
-  padding-bottom: 18px;
+  align-items: center;
   justify-content: center;
   cursor: pointer;
   font-family: 'SeasonSans', -apple-system, sans-serif;
-  font-size: 12px;
-  color: #aaa;
+  font-size: 13px;
+  color: var(--memo-ink-soft);
   position: relative;
 }
 
@@ -349,7 +377,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 14px;
-  margin-top: 12px;
+  flex-shrink: 0;
 }
 
 .modal-cancel,
@@ -364,11 +392,11 @@
 }
 
 .modal-cancel {
-  color: #777;
+  color: var(--memo-ink-soft);
 }
 
 .modal-submit {
-  color: #000;
+  color: var(--memo-ink);
 }
 
 /* Home button */
@@ -461,40 +489,6 @@
   color: #F3F3F3;
 }
 
-.light-work-page.dark-mode .create-modal {
-  background: #4a4a4c;
-  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
-}
-
-.light-work-page.dark-mode .modal-title,
-.light-work-page.dark-mode .modal-title-nick,
-.light-work-page.dark-mode .shape-label,
-.light-work-page.dark-mode .modal-submit,
-.light-work-page.dark-mode .draft-text {
-  color: #F3F3F3;
-}
-
-.light-work-page.dark-mode .modal-cancel {
-  color: #aaa;
-}
-
-.light-work-page.dark-mode .draft-text::placeholder {
-  color: #888;
-}
-
-.light-work-page.dark-mode .draft-text-wrap {
-  --dash-color: #F3F3F3;
-}
-
-.light-work-page.dark-mode .modal-divider {
-  border-top-color: #F3F3F3;
-}
-
-.light-work-page.dark-mode .image-upload-area {
-  color: #888;
-}
-
-
 @media (max-width: 768px) {
   .room-header {
     gap: 16px;
@@ -528,11 +522,6 @@
 
   .create-modal {
     width: calc(100vw - 32px);
-    padding: 24px;
-  }
-
-  .modal-title {
-    font-size: 24px;
   }
 }
 
@@ -541,21 +530,21 @@
     flex-direction: column;
     gap: 4px;
     top: calc(14px + env(safe-area-inset-top, 0px));
-    left: 14px;
+    left: 16px;
     right: 44px;
   }
 
   .room-title {
-    font-size: 18px;
+    font-size: 19px;
   }
 
   .room-description {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .room-online {
     top: calc(14px + env(safe-area-inset-top, 0px));
-    right: 14px;
+    right: 16px;
   }
 
   .mode-toggle {
@@ -573,29 +562,28 @@
   .create-window-btn {
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     right: calc(20px + env(safe-area-inset-right, 0px));
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .home-btn {
-    font-size: 13px;
+    font-size: 15px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: calc(14px + env(safe-area-inset-left, 0px));
   }
 
   .create-modal {
+    /* House keeps its aspect-ratio from the base rule; just fit the width and
+       scale the whole thing down (~10% bigger than before). */
     width: calc(100vw - 24px);
-    padding: 20px;
-    /* Scale the whole popup down uniformly on mobile */
-    transform: scale(0.65);
+    transform: scale(0.79);
     transform-origin: center;
   }
 
-  .modal-title {
-    font-size: 20px;
-  }
-
-  .image-upload-area {
-    height: 160px;
+  /* Memo-card outlines: a touch thinner + denser dashes on mobile */
+  .room-canvas rect,
+  .room-canvas ellipse {
+    stroke-width: 0.6;
+    stroke-dasharray: 3 2;
   }
 }
 
@@ -637,13 +625,13 @@
   }
 
   .window-username {
-    font-size: 12px;
+    font-size: 14px;
     height: 22px;
     line-height: 22px;
   }
 
   .window-text {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.4;
   }
 

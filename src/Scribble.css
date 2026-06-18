@@ -357,16 +357,16 @@
     flex-direction: column;
     gap: 4px;
     top: calc(14px + env(safe-area-inset-top, 0px));
-    left: 14px;
+    left: 16px;
     right: 44px;
   }
 
   .scribble-title {
-    font-size: 18px;
+    font-size: 19px;
   }
 
   .scribble-description {
-    font-size: 14px;
+    font-size: 16px;
     /* Keep clear of the "* NN marks" counter (top-right) so they don't overlap */
     max-width: calc(100vw - 110px);
   }
@@ -400,7 +400,7 @@
 
   /* erase matches the back button size on mobile */
   .scribble-erase-btn {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .mode-toggle {
@@ -417,12 +417,12 @@
 
   .scribble-online {
     top: calc(46px + env(safe-area-inset-top, 0px));
-    right: 14px;
+    right: 16px;
   }
 
   .scribble-online .online-star,
   .scribble-online .online-label {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .scribble-preview-image {
@@ -432,12 +432,12 @@
   .scribble-canvas-frame {
     top: calc(110px + env(safe-area-inset-top, 0px));
     bottom: calc(170px + env(safe-area-inset-bottom, 0px));
-    left: 14px;
-    right: 14px;
+    left: 16px;
+    right: 16px;
   }
 
   .home-btn {
-    font-size: 13px;
+    font-size: 15px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: calc(14px + env(safe-area-inset-left, 0px));
   }

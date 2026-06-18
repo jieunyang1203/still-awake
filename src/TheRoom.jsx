@@ -6,6 +6,8 @@ import { DashedRect, DashedEllipse } from './components/DashedBorder';
 import FilmGrain from './components/FilmGrain';
 import sunSvg from './assets/sun.svg';
 import moonSvg from './assets/moon.svg';
+import memoSvg from './assets/memo.svg';
+import memo2Svg from './assets/memo2.svg';
 import photo1 from './assets/room-photos/1.jpg';
 import photo2 from './assets/room-photos/2.jpg';
 import photo3 from './assets/room-photos/3.jpg';
@@ -283,57 +285,59 @@ function TheRoom() {
 
       {showCreateModal && (
         <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-          <div className="create-modal" onClick={e => e.stopPropagation()}>
-            <p className="modal-title">
-              Share something{nickname ? <>, <span className="modal-title-nick">{nickname}</span></> : ''}
-            </p>
+          <div
+            className="create-modal"
+            onClick={e => e.stopPropagation()}
+            style={{ backgroundImage: `url(${isDarkMode ? memo2Svg : memoSvg})` }}
+          >
+            {/* runs along the right roof line */}
+            <p className="modal-title">share something{nickname ? `, ${nickname}` : ''}</p>
 
-            <div className="shape-picker">
-              <span className="shape-label">Choose a shape:</span>
-              <button className="shape-btn" onClick={() => setDraftShape('circle')} aria-label="circle">
-                <svg width="34" height="21" viewBox="0 0 48 30" fill="none">
-                  <ellipse cx="24" cy="15" rx="21" ry="12"
-                    stroke={isDarkMode ? '#F3F3F3' : '#000'}
-                    strokeWidth={draftShape === 'circle' ? '0.7' : '1'}
-                    strokeDasharray={draftShape === 'circle' ? undefined : '4 3'}
-                  />
-                </svg>
-              </button>
-              <button className="shape-btn" onClick={() => setDraftShape('rect')} aria-label="rect">
-                <svg width="28" height="21" viewBox="0 0 40 30" fill="none">
-                  <rect x="1.5" y="1.5" width="37" height="27" rx="1"
-                    stroke={isDarkMode ? '#F3F3F3' : '#000'}
-                    strokeWidth={draftShape === 'rect' ? '0.7' : '1'}
-                    strokeDasharray={draftShape === 'rect' ? undefined : '4 3'}
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="draft-text-wrap">
-              <textarea
-                className="draft-text"
-                placeholder={"what are you up to tonight?\n\n"}
-                value={draftText}
-                onChange={e => setDraftText(e.target.value)}
-              />
-              <div className="modal-lines" aria-hidden="true">
-                <div className="note-line-row"><hr className="modal-divider" /></div>
-                <div className="note-line-row"><hr className="modal-divider" /></div>
-                <div className="note-line-row"><hr className="modal-divider" /></div>
+            <div className="modal-body">
+              <div className="shape-picker">
+                <span className="shape-label">choose a shape:</span>
+                <button className="shape-btn" onClick={() => setDraftShape('circle')} aria-label="circle">
+                  <svg width="34" height="21" viewBox="0 0 48 30" fill="none">
+                    <ellipse className="shape-outline" cx="24" cy="15" rx="21" ry="12"
+                      strokeWidth={draftShape === 'circle' ? '0.7' : '1'}
+                      strokeDasharray={draftShape === 'circle' ? undefined : '4 3'}
+                    />
+                  </svg>
+                </button>
+                <button className="shape-btn" onClick={() => setDraftShape('rect')} aria-label="rect">
+                  <svg width="28" height="21" viewBox="0 0 40 30" fill="none">
+                    <rect className="shape-outline" x="1.5" y="1.5" width="37" height="27" rx="1"
+                      strokeWidth={draftShape === 'rect' ? '0.7' : '1'}
+                      strokeDasharray={draftShape === 'rect' ? undefined : '4 3'}
+                    />
+                  </svg>
+                </button>
               </div>
-            </div>
 
-            <div className="image-upload-area" onClick={() => fileInputRef.current?.click()}>
-              {draftImage
-                ? <img src={draftImage} alt="" className="draft-image-preview" />
-                : <span>add a photo</span>}
-              <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
-            </div>
+              <div className="draft-text-wrap">
+                <textarea
+                  className="draft-text"
+                  placeholder="what are you up to tonight?"
+                  value={draftText}
+                  onChange={e => setDraftText(e.target.value)}
+                />
+                <div className="modal-lines" aria-hidden="true">
+                  <div className="note-line-row"><hr className="modal-divider" /></div>
+                  <div className="note-line-row"><hr className="modal-divider" /></div>
+                </div>
+              </div>
 
-            <div className="modal-actions">
-              <button className="modal-cancel" onClick={() => setShowCreateModal(false)}>cancel</button>
-              <button className="modal-submit" onClick={handleCreate}>save</button>
+              <div className="image-upload-area" onClick={() => fileInputRef.current?.click()}>
+                {draftImage
+                  ? <img src={draftImage} alt="" className="draft-image-preview" />
+                  : <span>add a photo</span>}
+                <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+              </div>
+
+              <div className="modal-actions">
+                <button className="modal-cancel" onClick={() => setShowCreateModal(false)}>cancel</button>
+                <button className="modal-submit" onClick={handleCreate}>save</button>
+              </div>
             </div>
           </div>
         </div>

@@ -90,9 +90,9 @@
 
   .description {
     text-align: left;
-    /* Fixed to match the bottom nav (20px) so the top text doesn't shrink to
-       13px on narrower windows while the bottom stays put. */
-    font-size: 20px;
+    /* Scales like the original (up to 24px, larger than the 20px nav) but with
+       a raised floor so it never shrinks to a tiny 13px on narrow windows. */
+    font-size: clamp(18px, 1.67vw, 24px);
     font-family: 'PPEditorialNew', -apple-system, sans-serif;
     font-weight: 200;
     line-height: 1.45;
@@ -384,12 +384,12 @@
   .nav-time,
   .tonight-label,
   .description {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .nickname-input,
   .nickname-sizer::after {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   /* Tighten the gap between "↘ tonight, you are:" and the input on mobile */
@@ -421,12 +421,12 @@
   .nav-time,
   .tonight-label,
   .description {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .nickname-input,
   .nickname-sizer::after {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
