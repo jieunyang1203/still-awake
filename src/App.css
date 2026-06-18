@@ -263,13 +263,19 @@
     100% { opacity: 0; }
   }
 
+  /* Fixed (viewport-bounded) like the light layer + grain, so all three
+     background layers cover the exact same full-screen area. As an absolute
+     layer it was bounded by .app-page's 100dvh, which on mobile doesn't match
+     the real viewport (iOS toolbars) — leaving a visible seam during the
+     color-change animation. */
   .app-bg-dark {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background: linear-gradient(to bottom, #3D3D3F 0%, #A0A0A5 60%);
     pointer-events: none;
     z-index: 0;
     will-change: opacity;
+    transform: translateZ(0);
     animation: bg-oscillate 33s linear infinite;
   }
 
