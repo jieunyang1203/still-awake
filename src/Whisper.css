@@ -316,11 +316,6 @@
     right: 16px;
   }
 
-  .online-star,
-  .online-label {
-    font-size: 16px;
-  }
-
   .home-btn {
     font-size: 15px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));

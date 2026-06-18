@@ -420,11 +420,6 @@
     right: 16px;
   }
 
-  .scribble-online .online-star,
-  .scribble-online .online-label {
-    font-size: 16px;
-  }
-
   .scribble-preview-image {
     max-width: 85vw;
   }

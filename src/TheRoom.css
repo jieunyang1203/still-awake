@@ -227,16 +227,17 @@
 .create-modal {
   position: relative;
   width: 528px;
-  aspect-ratio: 196.75 / 158.94;
-  background-repeat: no-repeat;
-  background-position: center;
-  /* 100% 100% (not contain) — the modal's aspect-ratio already matches the SVG
-     viewBox, and contain fails on iOS for an SVG with no intrinsic width/height. */
-  background-size: 100% 100%;
-  /* ink for the HTML text/shape outlines that overlay the SVG */
+  /* ink for the HTML text/shape outlines that overlay the house */
   --memo-stroke: #000;
   --memo-ink: #000;
   --memo-ink-soft: #aaa;
+}
+
+/* The house image defines the modal's height (from the SVG viewBox aspect) */
+.memo-house {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .light-work-page.dark-mode .create-modal {

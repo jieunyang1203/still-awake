@@ -130,7 +130,7 @@ function Whisper() {
 
       <div className="archive-online">
         <span className="online-star">*</span>
-        <span className="online-label">{String(writtenCount).padStart(2, '0')} written</span>
+        <span className="online-label">{String(writtenCount).padStart(2, '0')} sent</span>
       </div>
 
       <div className="whisper-area">

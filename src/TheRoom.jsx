@@ -285,11 +285,9 @@ function TheRoom() {
 
       {showCreateModal && (
         <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-          <div
-            className="create-modal"
-            onClick={e => e.stopPropagation()}
-            style={{ backgroundImage: `url(${isDarkMode ? memo2Svg : memoSvg})` }}
-          >
+          <div className="create-modal" onClick={e => e.stopPropagation()}>
+            {/* House paper — <img> so the SVG viewBox gives it a reliable size on iOS */}
+            <img className="memo-house" src={isDarkMode ? memo2Svg : memoSvg} alt="" aria-hidden="true" />
             {/* runs along the right roof line */}
             <p className="modal-title">share something{nickname ? `, ${nickname}` : ''}</p>
 
