@@ -307,9 +307,11 @@
 
 @media (max-width: 480px) {
   .clock-container {
-    width: 175vw;
-    height: 175vw;
-    transform: translateX(-48vw);
+    /* 80% of the old 175vw, with translateX retuned so the clock's right edge
+       stays at the same spot (right edge = 50 + width/2 + translateX in vw). */
+    width: 140vw;
+    height: 140vw;
+    transform: translateX(-30.5vw);
   }
 
   .time-prefix {
@@ -326,7 +328,8 @@
 
   .nav-workspace,
   .nav-time,
-  .tonight-label {
+  .tonight-label,
+  .description {
     font-size: 15px;
   }
 
@@ -353,9 +356,10 @@
 /* Compact phones (iPhone SE, mini — ≤375px) */
 @media (max-width: 375px) {
   .clock-container {
-    width: 170vw;
-    height: 170vw;
-    transform: translateX(-46vw);
+    /* 80% of the old 170vw; right edge kept at the same spot. */
+    width: 136vw;
+    height: 136vw;
+    transform: translateX(-29vw);
   }
 
   .nav-workspace,
