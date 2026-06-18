@@ -204,7 +204,12 @@
      more efficiently on resize than a painted background on the page root */
   .app-bg-light {
     position: fixed;
-    inset: 0;
+    /* Extend into the iOS safe areas so the gradient covers the status bar /
+       home indicator, not just the safe content area. */
+    top: calc(env(safe-area-inset-top, 0px) * -1);
+    left: calc(env(safe-area-inset-left, 0px) * -1);
+    right: calc(env(safe-area-inset-right, 0px) * -1);
+    bottom: calc(env(safe-area-inset-bottom, 0px) * -1);
     background: linear-gradient(to bottom, #BDDDFE 0%, #F3F3F3 25%);
     pointer-events: none;
     z-index: 0;
@@ -269,7 +274,10 @@
      color-change animation. */
   .app-bg-dark {
     position: fixed;
-    inset: 0;
+    top: calc(env(safe-area-inset-top, 0px) * -1);
+    left: calc(env(safe-area-inset-left, 0px) * -1);
+    right: calc(env(safe-area-inset-right, 0px) * -1);
+    bottom: calc(env(safe-area-inset-bottom, 0px) * -1);
     background: linear-gradient(to bottom, #3D3D3F 0%, #A0A0A5 60%);
     pointer-events: none;
     z-index: 0;

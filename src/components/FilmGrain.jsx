@@ -51,7 +51,15 @@ function FilmGrain({ intensityScale = 1 }) {
     // cut off at the top/bottom when sized directly.
     <div
       style={{
-        position: 'fixed', inset: 0,
+        // Extend BEYOND the viewport by the safe-area insets so the grain
+        // physically covers the iOS status-bar / home-indicator strips,
+        // regardless of whether fixed top:0 maps to the absolute top or the
+        // safe-area top.
+        position: 'fixed',
+        top: 'calc(env(safe-area-inset-top, 0px) * -1)',
+        left: 'calc(env(safe-area-inset-left, 0px) * -1)',
+        right: 'calc(env(safe-area-inset-right, 0px) * -1)',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) * -1)',
         pointerEvents: 'none',
         zIndex: 1,
         opacity: 0.18 * intensityScale,
