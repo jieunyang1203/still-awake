@@ -311,6 +311,10 @@
        stays at the same spot (right edge = 50 + width/2 + translateX in vw). */
     width: 140vw;
     height: 140vw;
+    /* Stay a perfect circle even when dvh < height — never let flex compress
+       the height (which would squash the clock into an ellipse). */
+    flex-shrink: 0;
+    aspect-ratio: 1;
     transform: translateX(-30.5vw);
   }
 
@@ -359,6 +363,8 @@
     /* 80% of the old 170vw; right edge kept at the same spot. */
     width: 136vw;
     height: 136vw;
+    flex-shrink: 0;
+    aspect-ratio: 1;
     transform: translateX(-29vw);
   }
 
