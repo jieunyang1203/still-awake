@@ -43,13 +43,14 @@ function Home() {
         // Currently open (1 AM - 5 AM)
         setTimeUntilOpen('Open now');
       } else {
-        // Calculate time until 1:00 AM
+        // Calculate time until 1:00 AM. The minute/second borrows below add the
+        // final hour, so the base hour is (target - currentHour - 1).
         if (currentHour >= 5) {
-          // After 5 AM, count to next day's 1 AM
-          hoursUntil = (25 - currentHour);
+          // After 5 AM, count to next day's 1 AM (25h)
+          hoursUntil = (24 - currentHour);
         } else {
           // Before 1 AM (midnight to 1 AM), count to today's 1 AM
-          hoursUntil = (1 - currentHour);
+          hoursUntil = (0 - currentHour);
         }
 
         minutesUntil = 60 - currentMinute - 1;

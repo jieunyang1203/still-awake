@@ -305,21 +305,69 @@
     color: #aaa;
   }
 
+  /* Mobile nickname modal — centered, blurs the page behind it */
+  .nickname-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(243, 243, 243, 0.35);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+  }
+
+  .nickname-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+  }
+
+  .nickname-modal-label {
+    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-weight: 200;
+    font-size: 18px;
+    color: #000;
+    white-space: nowrap;
+  }
+
+  .nickname-modal-input {
+    font-family: 'SeasonSans', -apple-system, sans-serif;
+    font-weight: 300;
+    /* 16px keeps iOS Safari from auto-zooming on focus */
+    font-size: 16px;
+    text-align: center;
+    color: #888;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 220px;
+    max-width: 64vw;
+    padding: 2px 0;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .nickname-modal-input::placeholder {
+    color: #aaa;
+  }
+
 @media (max-width: 480px) {
   .clock-container {
-    /* 80% of the old 175vw, with translateX retuned so the clock's right edge
-       stays at the same spot (right edge = 50 + width/2 + translateX in vw). */
-    width: 140vw;
-    height: 140vw;
+    width: 175vw;
+    height: 175vw;
     /* Stay a perfect circle even when dvh < height — never let flex compress
        the height (which would squash the clock into an ellipse). */
     flex-shrink: 0;
     aspect-ratio: 1;
-    transform: translateX(-30.5vw);
+    transform: translateX(-48vw);
   }
 
   .time-prefix {
-    display: none;
+    display: inline;
   }
 
   .landing-bottom-left {
@@ -360,12 +408,11 @@
 /* Compact phones (iPhone SE, mini — ≤375px) */
 @media (max-width: 375px) {
   .clock-container {
-    /* 80% of the old 170vw; right edge kept at the same spot. */
-    width: 136vw;
-    height: 136vw;
+    width: 170vw;
+    height: 170vw;
     flex-shrink: 0;
     aspect-ratio: 1;
-    transform: translateX(-29vw);
+    transform: translateX(-46vw);
   }
 
   .nav-workspace,

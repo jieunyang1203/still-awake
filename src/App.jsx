@@ -11,8 +11,15 @@ function App() {
 
   const [timeUntilOpen, setTimeUntilOpen] = useState('');
   const [showNicknameInput, setShowNicknameInput] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 480);
   const sizerRef = useRef(null);
   const composingRef = useRef(false);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Background oscillation and text color are now CSS animations (compositor thread, zero JS overhead)
 
@@ -164,7 +171,10 @@ function App() {
       const m = now.getMinutes();
       const s = now.getSeconds();
       if (h >= 1 && h < 5) { setTimeUntilOpen('Open now'); return; }
-      let hoursUntil = h >= 5 ? 25 - h : 1 - h;
+      // Opens at 1 AM. Counting down to the next 1:00:00 — the minute/second
+      // borrows below already add the final hour, so the base is (target-h-1):
+      // 24-h after 5 AM (next-day 1 AM = 25h), -h before 1 AM (today's 1 AM).
+      let hoursUntil = h >= 5 ? 24 - h : 0 - h;
       let minutesUntil = 60 - m - 1;
       let secondsUntil = 60 - s;
       if (secondsUntil === 60) { secondsUntil = 0; minutesUntil += 1; }
@@ -213,7 +223,7 @@ function App() {
       {/* Base layer */}
       <div className="landing-bottom-left text-base-layer">
         <span className="nav-workspace" onClick={handleNavigateHome}>To workspace</span>
-        {showNicknameInput && (
+        {showNicknameInput && !isMobile && (
           <span className="tonight-label">↘ tonight, you are:</span>
         )}
       </div>
@@ -228,7 +238,7 @@ function App() {
       {/* White text layer — opacity only, compositor-safe */}
       <div className="landing-bottom-left text-white-layer" aria-hidden="true">
         <span className="nav-workspace">To workspace</span>
-        {showNicknameInput && (
+        {showNicknameInput && !isMobile && (
           <span className="tonight-label">↘ tonight, you are:</span>
         )}
       </div>
@@ -236,10 +246,11 @@ function App() {
         {timeUntilOpen === 'Open now' ? 'Open now' : <><span className="time-prefix">Hours until opening: </span>{timeUntilOpen}</>}
       </span>
 
-      {/* Nickname layer — only the input is visible here; the label is a
-          hidden spacer so the input lines up after the real (color-cycling)
-          label rendered in the base/white layers above. */}
-      {showNicknameInput && (
+      {/* Nickname layer (desktop) — only the input is visible here; the label
+          is a hidden spacer so the input lines up after the real (color-cycling)
+          label rendered in the base/white layers above. Mobile uses the
+          centered modal below instead. */}
+      {showNicknameInput && !isMobile && (
         <div className="landing-bottom-left nickname-layer">
           <span className="nav-workspace" style={{ visibility: 'hidden' }} aria-hidden="true">To workspace</span>
           <div className="nickname-box">
@@ -264,6 +275,31 @@ function App() {
                 size={1}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile: a centered, blurred modal instead of the tiny bottom input
+          (which was too low and triggered iOS zoom). */}
+      {showNicknameInput && isMobile && (
+        <div className="nickname-modal-overlay" onClick={() => setShowNicknameInput(false)}>
+          <div className="nickname-modal" onClick={e => e.stopPropagation()}>
+            <span className="nickname-modal-label">↘ tonight, you are:</span>
+            <input
+              className="nickname-modal-input"
+              placeholder="a name for tonight."
+              maxLength={6}
+              onCompositionStart={() => { composingRef.current = true; }}
+              onCompositionEnd={(e) => {
+                composingRef.current = false;
+                if (e.target.value.length > 6) e.target.value = e.target.value.slice(0, 6);
+              }}
+              onInput={(e) => {
+                if (!composingRef.current && e.target.value.length > 6) e.target.value = e.target.value.slice(0, 6);
+              }}
+              onKeyDown={handleNicknameKeyDown}
+              autoFocus
+            />
           </div>
         </div>
       )}
