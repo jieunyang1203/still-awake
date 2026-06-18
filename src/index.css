@@ -60,34 +60,43 @@ body {
   background: #F3F3F3;
 }
 
-html {
+html,
+body {
   height: 100%;
 }
 
-/* Lock scrolling so nothing rubber-bands — but DON'T use html{overflow:hidden},
-   which on iOS clips fixed full-screen layers out of the status-bar /
-   home-indicator safe areas. Pinning body with position:fixed + inset:0 locks
-   the page AND makes body cover the entire device (safe areas included), so its
-   background fills those strips too. */
+/* Scroll is locked on #root so the body background-color still propagates to the
+   whole viewport canvas (incl. the iOS status-bar / home-indicator safe areas),
+   and fixed full-screen layers aren't clipped. */
 body {
-  position: fixed;
-  inset: 0;
   overflow: hidden;
   overscroll-behavior: none;
 }
 
 #root {
   height: 100%;
+  overflow: hidden;
 }
 
-/* body covers the whole device (incl. iOS safe areas) and Safari can tint the
-   status bar from its background — keep it in sync with each screen. */
+/* iOS Safari tints the status-bar / safe-area strips with the BODY
+   background-color (proven: the landing gradient bled into the home top). So we
+   drive that color per screen. */
 body.dark-mode {
-  background: #3D3D3F;
+  background-color: #3D3D3F;
 }
 
-/* Landing: match the light gradient so the safe-area strips (status bar /
-   home indicator) blend with the page instead of showing a flat band. */
+/* Landing: animate the body color so the status bar follows the page's
+   light<->dark color change (same 33s cadence as the gradient layers). The
+   color tracks the gradient's TOP color, which is what sits behind the chip. */
+@keyframes body-landing-tint {
+  0%   { background-color: #BDDDFE; }
+  20%  { background-color: #BDDDFE; }
+  33%  { background-color: #3D3D3F; }
+  67%  { background-color: #3D3D3F; }
+  80%  { background-color: #BDDDFE; }
+  100% { background-color: #BDDDFE; }
+}
 body.landing {
-  background: linear-gradient(to bottom, #BDDDFE 0%, #F3F3F3 25%);
+  background-color: #BDDDFE;
+  animation: body-landing-tint 33s linear infinite;
 }

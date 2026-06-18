@@ -103,6 +103,7 @@ function TheRoom() {
 
   useEffect(() => {
     localStorage.setItem('darkMode', isDarkMode);
+    document.body.classList.remove('landing');
     document.body.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
   useEffect(() => { localStorage.setItem('roomPositions-v2', JSON.stringify(positions)); }, [positions]);

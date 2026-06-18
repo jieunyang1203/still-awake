@@ -23,6 +23,7 @@ function Home() {
 
   // Keep the body backdrop (iOS status-bar / safe-area region) in sync with theme
   useEffect(() => {
+    document.body.classList.remove('landing');
     document.body.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
 

@@ -54,6 +54,7 @@ function Whisper() {
 
   useEffect(() => {
     localStorage.setItem('darkMode', isDarkMode);
+    document.body.classList.remove('landing');
     document.body.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
   useEffect(() => {
