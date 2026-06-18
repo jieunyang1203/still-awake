@@ -60,15 +60,16 @@ body {
   background: #F3F3F3;
 }
 
-html,
-body {
+html {
   height: 100%;
 }
 
-/* Scroll is locked on #root so the body background-color still propagates to the
-   whole viewport canvas (incl. the iOS status-bar / home-indicator safe areas),
-   and fixed full-screen layers aren't clipped. */
+/* Lock scrolling by PINNING the body (position:fixed + inset:0). Unlike
+   html{overflow:hidden} this does NOT clip the fixed full-screen background
+   layers, so they can still extend into the iOS safe areas. */
 body {
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   overscroll-behavior: none;
 }
