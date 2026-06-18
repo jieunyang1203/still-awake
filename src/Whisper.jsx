@@ -52,7 +52,10 @@ function Whisper() {
   const landQueueRef = useRef([]);
   const landRafRef = useRef(null);
 
-  useEffect(() => { localStorage.setItem('darkMode', isDarkMode); }, [isDarkMode]);
+  useEffect(() => {
+    localStorage.setItem('darkMode', isDarkMode);
+    document.body.classList.toggle('dark-mode', isDarkMode);
+  }, [isDarkMode]);
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: TODAY_KEY, chars: landedChars }));
   }, [landedChars]);

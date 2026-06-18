@@ -59,3 +59,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #F3F3F3;
 }
+
+/* The body background propagates to the whole viewport canvas (incl. the iOS
+   status-bar / safe-area region). Keep it in sync with dark mode so the top
+   of the screen never shows a light "cut" behind the page. */
+body.dark-mode {
+  background: #3D3D3F;
+}

@@ -21,6 +21,11 @@ function Home() {
   const nickname = localStorage.getItem('nickname') || '';
   const onlineCount = useOnlineCount();
 
+  // Keep the body backdrop (iOS status-bar / safe-area region) in sync with theme
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', isDarkMode);
+  }, [isDarkMode]);
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();

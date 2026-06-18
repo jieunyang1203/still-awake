@@ -101,7 +101,10 @@ function TheRoom() {
     };
   }, []);
 
-  useEffect(() => { localStorage.setItem('darkMode', isDarkMode); }, [isDarkMode]);
+  useEffect(() => {
+    localStorage.setItem('darkMode', isDarkMode);
+    document.body.classList.toggle('dark-mode', isDarkMode);
+  }, [isDarkMode]);
   useEffect(() => { localStorage.setItem('roomPositions', JSON.stringify(positions)); }, [positions]);
   useEffect(() => { localStorage.setItem('roomPositionsMobile', JSON.stringify(mobilePositions)); }, [mobilePositions]);
 

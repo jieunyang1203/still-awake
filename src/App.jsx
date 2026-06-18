@@ -149,6 +149,9 @@ function App() {
     };
   }, []);
 
+  // Landing is always the light gradient — clear any dark backdrop left on body
+  useEffect(() => { document.body.classList.remove('dark-mode'); }, []);
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();

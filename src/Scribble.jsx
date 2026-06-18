@@ -46,7 +46,10 @@ function Scribble() {
   // same array via addStroke() when they arrive.
   const strokesRef = useRef([]);
 
-  useEffect(() => { localStorage.setItem('darkMode', isDarkMode); }, [isDarkMode]);
+  useEffect(() => {
+    localStorage.setItem('darkMode', isDarkMode);
+    document.body.classList.toggle('dark-mode', isDarkMode);
+  }, [isDarkMode]);
 
   const drawStroke = (ctx, stroke) => {
     if (stroke.points.length < 2) return;
