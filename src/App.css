@@ -313,16 +313,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(243, 243, 243, 0.35);
-    -webkit-backdrop-filter: blur(7px);
-    backdrop-filter: blur(7px);
+    background: rgba(243, 243, 243, 0.18);
+    -webkit-backdrop-filter: blur(2.5px);
+    backdrop-filter: blur(2.5px);
   }
 
   .nickname-modal {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 3px;
     padding: 0 24px;
   }
 
@@ -357,13 +357,13 @@
 
 @media (max-width: 480px) {
   .clock-container {
-    width: 175vw;
-    height: 175vw;
+    width: 150vw;
+    height: 150vw;
     /* Stay a perfect circle even when dvh < height — never let flex compress
        the height (which would squash the clock into an ellipse). */
     flex-shrink: 0;
     aspect-ratio: 1;
-    transform: translateX(-48vw);
+    transform: translateX(-35.5vw);
   }
 
   .time-prefix {
@@ -408,11 +408,11 @@
 /* Compact phones (iPhone SE, mini — ≤375px) */
 @media (max-width: 375px) {
   .clock-container {
-    width: 170vw;
-    height: 170vw;
+    width: 145vw;
+    height: 145vw;
     flex-shrink: 0;
     aspect-ratio: 1;
-    transform: translateX(-46vw);
+    transform: translateX(-33.5vw);
   }
 
   .nav-workspace,

@@ -284,7 +284,7 @@ function App() {
       {showNicknameInput && isMobile && (
         <div className="nickname-modal-overlay" onClick={() => setShowNicknameInput(false)}>
           <div className="nickname-modal" onClick={e => e.stopPropagation()}>
-            <span className="nickname-modal-label">↘ tonight, you are:</span>
+            <span className="nickname-modal-label">tonight, you are:</span>
             <input
               className="nickname-modal-input"
               placeholder="a name for tonight."
