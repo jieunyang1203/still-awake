@@ -48,8 +48,12 @@ function FilmGrain({ intensityScale = 1 }) {
     <svg
       ref={svgRef}
       style={{
+        // 100vw/100vh (large viewport) — NOT width/height:100%, which on iOS
+        // resolves to the safe-area-excluded height and left the grain cut off
+        // at the top/bottom. vh = the large viewport, so the grain always fills
+        // the whole device including the status-bar / home-indicator areas.
         position: 'fixed', top: 0, left: 0,
-        width: '100%', height: '100%',
+        width: '100vw', height: '100vh',
         pointerEvents: 'none',
         zIndex: 1,
         opacity: 0.18 * intensityScale,

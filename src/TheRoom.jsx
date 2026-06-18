@@ -32,13 +32,13 @@ const MOBILE_GEO = {
 const MINE_MOBILE_GEO = { x: 212, y: 612, width: 158, height: 150 };
 
 const INITIAL_MOCK = [
-  { id: 'mock1', username: 'miwoo', shape: 'circle', x: 60, y: 60, width: 450, height: 290, text: 'look at my cat!', image: photo4 },
-  { id: 'mock2', username: '@nn', shape: 'rect', x: 580, y: 60, width: 480, height: 265, text: '카페인 좋아', image: photo1 },
-  { id: 'mock3', username: 'teddy', shape: 'circle', x: 1090, y: 80, width: 400, height: 340, text: '', image: photo6 },
-  { id: 'mock4', username: 'jen', shape: 'rect', x: 60, y: 420, width: 430, height: 300, text: 'doodling', image: photo3 },
-  { id: 'mock5', username: 'owo', shape: 'rect', x: 560, y: 440, width: 410, height: 320, text: 'a little snack for the night\n<33', image: photo7 },
-  { id: 'mock6', username: 'h1234', shape: 'circle', x: 1050, y: 460, width: 470, height: 270, text: '', image: photo2 },
-  { id: 'mock7', username: 'user23', shape: 'rect', x: 60, y: 800, width: 460, height: 280, text: '오늘 산책하다가 찍은 꽃잎', image: photo5 },
+  { id: 'mock1', username: 'miwoo', shape: 'circle', x: 80, y: 90, width: 450, height: 290, text: 'look at my cat!', image: photo4 },
+  { id: 'mock2', username: '@nn', shape: 'rect', x: 540, y: 70, width: 480, height: 265, text: '카페인 좋아', image: photo1 },
+  { id: 'mock3', username: 'teddy', shape: 'circle', x: 1090, y: 120, width: 400, height: 340, text: '', image: photo6 },
+  { id: 'mock4', username: 'jen', shape: 'rect', x: 180, y: 430, width: 430, height: 300, text: 'doodling', image: photo3 },
+  { id: 'mock5', username: 'owo', shape: 'rect', x: 1110, y: 450, width: 410, height: 320, text: 'a little snack for the night\n<33', image: photo7 },
+  { id: 'mock6', username: 'h1234', shape: 'circle', x: 640, y: 390, width: 470, height: 270, text: '', image: photo2 },
+  { id: 'mock7', username: 'user23', shape: 'rect', x: 440, y: 600, width: 460, height: 280, text: '오늘 산책하다가 찍은 꽃잎', image: photo5 },
 ];
 
 function TheRoom() {
@@ -53,7 +53,7 @@ function TheRoom() {
   });
 
   const [positions, setPositions] = useState(() => {
-    const saved = localStorage.getItem('roomPositions');
+    const saved = localStorage.getItem('roomPositions-v2');
     return saved ? JSON.parse(saved) : {};
   });
   // Mobile drags are stored separately so they don't corrupt the desktop
@@ -105,7 +105,7 @@ function TheRoom() {
     localStorage.setItem('darkMode', isDarkMode);
     document.body.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
-  useEffect(() => { localStorage.setItem('roomPositions', JSON.stringify(positions)); }, [positions]);
+  useEffect(() => { localStorage.setItem('roomPositions-v2', JSON.stringify(positions)); }, [positions]);
   useEffect(() => { localStorage.setItem('roomPositionsMobile', JSON.stringify(mobilePositions)); }, [mobilePositions]);
 
   const posMap = isMobile ? mobilePositions : positions;
@@ -124,8 +124,16 @@ function TheRoom() {
     setActiveWinId(winId);
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
 
+    // Don't let a card be dragged up over the header text. Measure the
+    // header's real bottom (includes the iOS safe-area inset) and convert it
+    // into the canvas coordinate space (design px on desktop = screen px /
+    // scale; screen px on mobile where scale is 1).
+    const headerEl = document.querySelector('.room-header');
+    const headerBottom = headerEl ? headerEl.getBoundingClientRect().bottom : 0;
+    const minY = (headerBottom + 6) / scaleRef.current;
+
     const pos = posMap[winId] ?? { x: winX, y: winY };
-    dragRef.current = { id: winId, startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y, latestX: e.clientX, latestY: e.clientY };
+    dragRef.current = { id: winId, startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y, latestX: e.clientX, latestY: e.clientY, minY };
 
     let rafId = null;
 
@@ -141,7 +149,10 @@ function TheRoom() {
         const dy = (dragRef.current.latestY - dragRef.current.startY) / scaleRef.current;
         setPosMap(prev => ({
           ...prev,
-          [dragRef.current.id]: { x: dragRef.current.origX + dx, y: dragRef.current.origY + dy },
+          [dragRef.current.id]: {
+            x: dragRef.current.origX + dx,
+            y: Math.max(dragRef.current.minY, dragRef.current.origY + dy),
+          },
         }));
       });
     };
