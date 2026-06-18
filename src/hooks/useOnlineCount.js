@@ -1,13 +1,40 @@
 import { useState, useEffect, useCallback } from 'react';
 
-function getOrInit(key, min, max) {
-  const stored = localStorage.getItem(key);
-  if (stored !== null) {
-    const n = parseInt(stored, 10);
-    if (n >= min && n <= max) return n;
+// Counts belong to one "night session". They persist across room navigations
+// and reloads (so leaving and coming back doesn't reset them) and only roll
+// over when the session changes — a new day, where anything before 5 AM still
+// counts as the previous night (matching the app's 1–5 AM hours).
+function sessionKey() {
+  const now = new Date();
+  if (now.getHours() < 5) {
+    const prev = new Date(now);
+    prev.setDate(prev.getDate() - 1);
+    return prev.toDateString();
   }
+  return now.toDateString();
+}
+
+function readStored(key) {
+  try {
+    const o = JSON.parse(localStorage.getItem(key) || 'null');
+    // Accept any numeric value from the current session — NOT bounded by
+    // [min,max], because increment() can legitimately push it past max.
+    if (o && o.date === sessionKey() && typeof o.value === 'number') return o.value;
+  } catch (_) {}
+  return null;
+}
+
+function writeStored(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ date: sessionKey(), value }));
+  } catch (_) {}
+}
+
+function getOrInit(key, min, max) {
+  const existing = readStored(key);
+  if (existing !== null) return existing;
   const initial = Math.floor(Math.random() * (max - min + 1)) + min;
-  localStorage.setItem(key, String(initial));
+  writeStored(key, initial);
   return initial;
 }
 
@@ -18,8 +45,10 @@ function useFluctuatingCount(key, min, max) {
     const tick = () => {
       setCount(prev => {
         const delta = Math.floor(Math.random() * 3) - 1;
-        const next = Math.min(max, Math.max(min, prev + delta));
-        localStorage.setItem(key, String(next));
+        // Only nudge within the ambient band when we're inside it; never drag a
+        // user-incremented value (above max) back down.
+        const next = prev > max ? prev : Math.min(max, Math.max(min, prev + delta));
+        writeStored(key, next);
         return next;
       });
     };
@@ -30,7 +59,7 @@ function useFluctuatingCount(key, min, max) {
   const increment = useCallback(() => {
     setCount(prev => {
       const next = prev + 1;
-      localStorage.setItem(key, String(next));
+      writeStored(key, next);
       return next;
     });
   }, [key]);

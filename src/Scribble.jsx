@@ -171,7 +171,7 @@ function Scribble() {
 
       <div className="scribble-header">
         <span className="scribble-title">Scribble</span>
-        <span className="scribble-description">make a mark on the shared page. it belongs to everyone who's here tonight.</span>
+        <span className="scribble-description">make a mark on the shared page. it belongs to everyone <br className="desc-break" />who's here tonight.</span>
       </div>
 
       <div className="scribble-online">

@@ -38,6 +38,14 @@
   line-height: 1.3;
 }
 
+/* The <br> breaks by default (so mobile always wraps); only hidden on wider
+   screens so desktop keeps the description on one line. */
+@media (min-width: 481px) {
+  .desc-break {
+    display: none;
+  }
+}
+
 /* Drawn count — floats above canvas, top-right */
 .scribble-online {
   position: fixed;
@@ -359,6 +367,8 @@
 
   .scribble-description {
     font-size: 14px;
+    /* Keep clear of the "* NN marks" counter (top-right) so they don't overlap */
+    max-width: calc(100vw - 110px);
   }
 
   .scribble-toolbar {
@@ -399,9 +409,10 @@
     transform: none;
   }
 
-  .mode-toggle svg {
-    width: 15px;
-    height: 15px;
+  .mode-toggle svg,
+  .mode-toggle img {
+    width: 16px;
+    height: 16px;
   }
 
   .scribble-online {

@@ -274,9 +274,10 @@
     transform: none;
   }
 
-  .mode-toggle svg {
-    width: 15px;
-    height: 15px;
+  .mode-toggle svg,
+  .mode-toggle img {
+    width: 16px;
+    height: 16px;
   }
 
   .whisper-area {
