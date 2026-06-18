@@ -323,7 +323,6 @@ function TheRoom() {
                 />
                 <div className="modal-lines" aria-hidden="true">
                   <div className="note-line-row"><hr className="modal-divider" /></div>
-                  <div className="note-line-row"><hr className="modal-divider" /></div>
                 </div>
               </div>
 
