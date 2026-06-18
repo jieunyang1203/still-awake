@@ -60,6 +60,22 @@ body {
   background: #F3F3F3;
 }
 
+/* Every screen is sized to the viewport — lock the document so nothing
+   scrolls or rubber-bands. This keeps fixed backgrounds (grain, gradient,
+   color animation) pinned and filling the device, and stops flow content
+   (e.g. the greeting) from drifting while fixed UI stays put.
+   The Room provides its own internal scroll when needed. */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#root {
+  height: 100%;
+}
+
 /* The body background propagates to the whole viewport canvas (incl. the iOS
    status-bar / safe-area region). Keep it in sync with dark mode so the top
    of the screen never shows a light "cut" behind the page. */

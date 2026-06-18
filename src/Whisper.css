@@ -80,8 +80,8 @@
 
 .archive-page {
   background: #F3F3F3;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  overflow: hidden;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
   position: relative;
