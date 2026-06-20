@@ -50,19 +50,19 @@ function TheRoom() {
   const onlineCount = useOnlineCount();
 
   const [myWindow, setMyWindow] = useState(() => {
-    const saved = localStorage.getItem('myRoomWindow');
-    return saved ? JSON.parse(saved) : null;
+    try { return JSON.parse(localStorage.getItem('myRoomWindow') || 'null'); }
+    catch (_) { return null; }
   });
 
   const [positions, setPositions] = useState(() => {
-    const saved = localStorage.getItem('roomPositions-v2');
-    return saved ? JSON.parse(saved) : {};
+    try { return JSON.parse(localStorage.getItem('roomPositions-v2') || '{}'); }
+    catch (_) { return {}; }
   });
   // Mobile drags are stored separately so they don't corrupt the desktop
   // canvas coordinates (different layout / coordinate space).
   const [mobilePositions, setMobilePositions] = useState(() => {
-    const saved = localStorage.getItem('roomPositionsMobile');
-    return saved ? JSON.parse(saved) : {};
+    try { return JSON.parse(localStorage.getItem('roomPositionsMobile') || '{}'); }
+    catch (_) { return {}; }
   });
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 480);
 
@@ -177,7 +177,29 @@ function TheRoom() {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setDraftImage(ev.target.result);
+    reader.onload = (ev) => {
+      // Downscale to a small JPEG before storing — full-res phone photos as
+      // base64 blow past the localStorage quota and the memory budget on iOS
+      // (which crashes the tab to a white screen).
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 600;
+        let { width, height } = img;
+        if (width >= height && width > MAX) { height = Math.round(height * MAX / width); width = MAX; }
+        else if (height > MAX) { width = Math.round(width * MAX / height); height = MAX; }
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          setDraftImage(canvas.toDataURL('image/jpeg', 0.82));
+        } catch (_) {
+          setDraftImage(ev.target.result);
+        }
+      };
+      img.onerror = () => setDraftImage(ev.target.result);
+      img.src = ev.target.result;
+    };
     reader.readAsDataURL(file);
   };
 
@@ -193,7 +215,7 @@ function TheRoom() {
       height: draftShape === 'circle' ? 278 : 278,
     };
     setMyWindow(win);
-    localStorage.setItem('myRoomWindow', JSON.stringify(win));
+    try { localStorage.setItem('myRoomWindow', JSON.stringify(win)); } catch (_) {}
     setShowCreateModal(false);
   };
 

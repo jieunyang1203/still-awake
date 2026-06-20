@@ -173,6 +173,8 @@
   margin: 0;
   line-height: 1.5;
   white-space: pre-line;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .window-delete {
