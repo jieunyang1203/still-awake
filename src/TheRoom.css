@@ -107,8 +107,8 @@
   font-size: 16px;
   color: #000;
   white-space: nowrap;
-  height: 28px;
-  line-height: 28px;
+  height: 22px;
+  line-height: 22px;
   flex-shrink: 0;
 }
 
@@ -152,7 +152,9 @@
 }
 
 .circle-window .window-content {
-  inset: 30px;
+  /* Wider top/bottom inset opens a clear lane for the × / edit buttons inside
+     the ellipse; sides stay tight so the image keeps its size. */
+  inset: 44px 30px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -163,6 +165,12 @@
   flex-shrink: 0;
   object-fit: cover;
   aspect-ratio: 1;
+}
+
+/* Slightly smaller image on circles so the shorter content band still leaves
+   room for the text above the bottom edit button. */
+.circle-window .window-image {
+  width: 42%;
 }
 
 .window-text {
@@ -177,22 +185,41 @@
   overflow-wrap: anywhere;
 }
 
-.window-delete {
+/* In-card controls — only on the user's own card (× delete, edit). */
+.card-btn {
   position: absolute;
-  top: 6px;
-  left: 6px;
   background: none;
   border: none;
-  font-size: 18px;
-  color: #999;
-  cursor: pointer;
   padding: 0;
+  cursor: pointer;
   line-height: 1;
+  z-index: 12;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
 }
 
-.window-delete:hover {
+.card-x {
+  font-size: 18px;
+  font-weight: 200; /* thin stroke */
   color: #000;
 }
+
+.card-edit {
+  font-size: 15px;
+  font-weight: 300;
+  color: #999;
+}
+
+/* Rect card: × top-right, edit bottom-right (inside the box). */
+.rect-x { top: 10px; right: 14px; }
+.rect-edit { bottom: 10px; right: 16px; }
+
+/* Circle card: × top-center, edit bottom-center, tucked near the ellipse tips
+   (inside the top/bottom inset lane, clear of the content). */
+.circle-x { top: 14px; left: 50%; transform: translateX(-50%); }
+.circle-edit { bottom: 14px; left: 50%; transform: translateX(-50%); }
+
+.light-work-page.dark-mode .card-x { color: #F3F3F3; }
+.light-work-page.dark-mode .card-edit { color: rgba(243, 243, 243, 0.5); }
 
 /* Create window button */
 .create-window-btn {
@@ -582,6 +609,13 @@
     transform-origin: center;
   }
 
+  /* iOS Safari auto-zooms into any focused input with font-size < 16px and
+     never zooms back out (page ends up stuck / white). Keep the CSS size at
+     16px to suppress that; the modal's scale(0.79) makes it look ~12.6px. */
+  .draft-text {
+    font-size: 16px;
+  }
+
   /* Memo-card outlines: a touch thinner + denser dashes on mobile */
   .room-canvas rect,
   .room-canvas ellipse {
@@ -631,8 +665,8 @@
 
   .window-username {
     font-size: 14px;
-    height: 22px;
-    line-height: 22px;
+    height: 18px;
+    line-height: 18px;
   }
 
   .window-text {
@@ -645,7 +679,17 @@
     gap: 8px;
   }
 
+  /* Same button-lane treatment as desktop, scaled for the small card. */
   .circle-window .window-content {
-    inset: 20px;
+    inset: 30px 16px;
   }
+
+  .card-x { font-size: 16px; }
+  .card-edit { font-size: 13px; }
+
+  .rect-x { top: 7px; right: 9px; }
+  .rect-edit { bottom: 7px; right: 10px; }
+
+  .circle-x { top: 9px; }
+  .circle-edit { bottom: 9px; }
 }

@@ -68,6 +68,7 @@ function TheRoom() {
 
   const [activeWinId, setActiveWinId] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [draftText, setDraftText] = useState('');
   const [draftImage, setDraftImage] = useState(null);
   const [draftShape, setDraftShape] = useState('circle');
@@ -203,21 +204,49 @@ function TheRoom() {
     reader.readAsDataURL(file);
   };
 
+  const openCreate = () => {
+    setEditMode(false);
+    setDraftText('');
+    setDraftImage(null);
+    setDraftShape('circle');
+    setShowCreateModal(true);
+  };
+
+  const handleEdit = () => {
+    if (!myWindow) return;
+    setEditMode(true);
+    setDraftText(myWindow.text || '');
+    setDraftImage(myWindow.image || null);
+    setDraftShape(myWindow.shape || 'circle');
+    setShowCreateModal(true);
+  };
+
+  const closeModal = () => {
+    setShowCreateModal(false);
+    setEditMode(false);
+  };
+
   const handleCreate = () => {
+    // Editing keeps the card's existing canvas position (stored separately in
+    // the positions map under 'mine'); only the content/shape changes.
     const win = {
       username: nickname || 'you',
       shape: draftShape,
       text: draftText,
       image: draftImage,
-      x: 60,
-      y: 60,
+      x: myWindow?.x ?? 60,
+      y: myWindow?.y ?? 60,
       width: draftShape === 'circle' ? 458 : 450,
       height: draftShape === 'circle' ? 278 : 278,
     };
     setMyWindow(win);
     try { localStorage.setItem('myRoomWindow', JSON.stringify(win)); } catch (_) {}
-    setShowCreateModal(false);
+    closeModal();
   };
+
+  // Buttons inside a card must not start a drag (the wrapper's pointerdown
+  // otherwise captures the pointer and swallows the click).
+  const stopDrag = (e) => e.stopPropagation();
 
   const handleDelete = () => {
     setMyWindow(null);
@@ -263,13 +292,10 @@ function TheRoom() {
                 style={{ left: pos.x, top: pos.y, width: win.width, height: win.height + 24, zIndex: activeWinId === win.id ? 10 : 1 }}
                 onPointerDown={(e) => handlePointerDown(e, win.id, win.x, win.y)}
               >
-                <span className={`window-username ${isCircle ? 'username-center' : 'username-right'}`}>
+                <span className="window-username username-center">
                   {win.username}
                 </span>
 
-                {win.id === 'mine' && (
-                  <button className="window-delete" onClick={handleDelete}>×</button>
-                )}
                 {isCircle ? (
                   <div className="circle-window-wrap" style={{ position: 'relative', width: win.width, height: win.height, flexShrink: 0 }}>
                     <div className="user-window circle-window" style={{ width: win.width, height: win.height }}>
@@ -281,6 +307,12 @@ function TheRoom() {
                       )}
                     </div>
                     <DashedEllipse />
+                    {win.id === 'mine' && (
+                      <>
+                        <button className="card-btn card-x circle-x" onPointerDown={stopDrag} onClick={handleDelete} aria-label="delete">×</button>
+                        <button className="card-btn card-edit circle-edit" onPointerDown={stopDrag} onClick={handleEdit}>edit</button>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <div className="user-window rect-window" style={{ width: win.width, height: win.height }}>
@@ -291,6 +323,12 @@ function TheRoom() {
                         {win.text && <p className="window-text">{win.text}</p>}
                       </div>
                     )}
+                    {win.id === 'mine' && (
+                      <>
+                        <button className="card-btn card-x rect-x" onPointerDown={stopDrag} onClick={handleDelete} aria-label="delete">×</button>
+                        <button className="card-btn card-edit rect-edit" onPointerDown={stopDrag} onClick={handleEdit}>edit</button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -300,18 +338,18 @@ function TheRoom() {
       </div>
 
       {!myWindow && (
-        <button className="create-window-btn" onClick={() => setShowCreateModal(true)}>
+        <button className="create-window-btn" onClick={openCreate}>
           + share
         </button>
       )}
 
       {showCreateModal && (
-        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+        <div className="modal-overlay" onClick={closeModal}>
           <div className="create-modal" onClick={e => e.stopPropagation()}>
             {/* House paper — <img> so the SVG viewBox gives it a reliable size on iOS */}
             <img className="memo-house" src={isDarkMode ? memo2Svg : memoSvg} alt="" aria-hidden="true" />
             {/* runs along the right roof line */}
-            <p className="modal-title">share something{nickname ? `, ${nickname}` : ''}</p>
+            <p className="modal-title">{editMode ? 'edit your note' : `share something${nickname ? `, ${nickname}` : ''}`}</p>
 
             <div className="modal-body">
               <div className="shape-picker">
@@ -354,7 +392,7 @@ function TheRoom() {
               </div>
 
               <div className="modal-actions">
-                <button className="modal-cancel" onClick={() => setShowCreateModal(false)}>cancel</button>
+                <button className="modal-cancel" onClick={closeModal}>cancel</button>
                 <button className="modal-submit" onClick={handleCreate}>save</button>
               </div>
             </div>
