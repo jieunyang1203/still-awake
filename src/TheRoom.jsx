@@ -24,15 +24,15 @@ const DESIGN_WIDTH = 1650;
 // slight x jitter keeps it from looking like a strict list. Fixed canvas (no
 // scroll), so the stack must stay inside ~840px of height.
 const MOBILE_GEO = {
-  mock1: { x: 96,  y: 92,  width: 216, height: 130 }, // circle — center-top
-  mock2: { x: 12,  y: 200, width: 238, height: 138 }, // rect — left, tucks under mock1
-  mock3: { x: 166, y: 300, width: 220, height: 134 }, // circle — beside mock2's tail
-  mock4: { x: 34,  y: 404, width: 252, height: 122 }, // rect — wide left
-  mock5: { x: 150, y: 508, width: 226, height: 132 }, // rect — right
-  mock6: { x: 8,   y: 596, width: 224, height: 136 }, // circle — beside mock5
-  mock7: { x: 84,  y: 684, width: 244, height: 112 }, // rect — center-bottom
+  mock1: { x: 96,  y: 64,  width: 216, height: 130 }, // circle — center-top, just below header
+  mock2: { x: 12,  y: 164, width: 238, height: 138 }, // rect — left, tucks under mock1
+  mock3: { x: 166, y: 256, width: 220, height: 134 }, // circle — beside mock2's tail
+  mock4: { x: 34,  y: 348, width: 252, height: 122 }, // rect — wide left
+  mock5: { x: 150, y: 438, width: 226, height: 132 }, // rect — right
+  mock6: { x: 8,   y: 520, width: 224, height: 136 }, // circle — beside mock5
+  mock7: { x: 84,  y: 598, width: 244, height: 112 }, // rect — center-bottom
 };
-const MINE_MOBILE_GEO = { x: 222, y: 700, width: 168, height: 106 };
+const MINE_MOBILE_GEO = { x: 222, y: 620, width: 168, height: 106 };
 
 const INITIAL_MOCK = [
   { id: 'mock1', username: 'miwoo', shape: 'circle', x: 80, y: 90, width: 450, height: 290, text: 'look at my cat!', image: photo4 },

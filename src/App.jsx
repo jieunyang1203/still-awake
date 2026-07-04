@@ -207,6 +207,12 @@ function App() {
     setShowNicknameInput(true);
   };
 
+  // Mobile gets a ~half-length summary of the landing copy; desktop keeps the
+  // full text. Rendered twice (base + white color-cycle layers), so shared here.
+  const landingDescription = isMobile
+    ? "Still Awake* opens at 1 AM and closes at 5. In between, a few people are here, working or sitting quietly with their thoughts. You can leave a note, send a word to someone you'll never know, or just stay, in the same quiet."
+    : "Still Awake* opens at 1 AM and closes at 5. In between, a few people are here, working on something, listening to something, or just sitting quietly with their thoughts for a while. You can leave a note about what you're up to tonight. You can send a word to someone you'll never know. Or you can just stay, and be here, in the same quiet as everyone else who is still awake.";
+
   const handleNicknameKeyDown = (e) => {
     if (e.isComposing || composingRef.current) return;
     if (e.key === 'Enter' && e.target.value.trim()) {
@@ -229,7 +235,7 @@ function App() {
       </div>
 
       <p className="description landing-description text-base-layer">
-        Still Awake* opens at 1 AM and closes at 5. In between, a few people are here, working on something, listening to something, or just sitting quietly with their thoughts for a while. You can leave a note about what you're up to tonight. You can send a word to someone you'll never know. Or you can just stay, and be here, in the same quiet as everyone else who is still awake.
+        {landingDescription}
       </p>
 
       {/* Base layer */}
@@ -245,7 +251,7 @@ function App() {
       </span>
 
       <p className="description landing-description text-white-layer" aria-hidden="true">
-        Still Awake* opens at 1 AM and closes at 5. In between, a few people are here, working on something, listening to something, or just sitting quietly with their thoughts for a while. You can leave a note about what you're up to tonight. You can send a word to someone you'll never know. Or you can just stay, and be here, in the same quiet as everyone else who is still awake.
+        {landingDescription}
       </p>
       {/* White text layer — opacity only, compositor-safe */}
       <div className="landing-bottom-left text-white-layer" aria-hidden="true">
