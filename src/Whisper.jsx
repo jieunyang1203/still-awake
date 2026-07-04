@@ -125,7 +125,7 @@ function Whisper() {
       <FilmGrain intensityScale={0.5} />
       <div className="archive-header">
         <span className="archive-title">Whisper..</span>
-        <span className="archive-description">say something. it doesn't have to reach anyone. words left here fade slowly, but they were here.</span>
+        <span className="archive-description">say something. it doesn't have to reach anyone. words fade slowly, but they were here.</span>
       </div>
 
       <div className="archive-online">

@@ -30,7 +30,7 @@
 .room-title {
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: clamp(16px, 1.53vw, 22px);
+  font-size: 22px;
   color: #000;
   white-space: nowrap;
 }
@@ -38,7 +38,7 @@
 .room-description {
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: clamp(14px, 1.39vw, 20px);
+  font-size: 20px;
   color: #000;
   line-height: 1.3;
 }
@@ -67,7 +67,7 @@
 .online-label {
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: clamp(14px, 1.39vw, 20px);
+  font-size: 20px;
   color: #000;
 }
 
@@ -564,12 +564,20 @@
     right: 44px;
   }
 
+  .online-label {
+    font-size: 15px;
+  }
+
+  .online-star {
+    font-size: 15px;
+  }
+
   .room-title {
-    font-size: 19px;
+    font-size: 20px;
   }
 
   .room-description {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .room-online {
@@ -585,18 +593,18 @@
 
   .mode-toggle svg,
   .mode-toggle img {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
   }
 
   .create-window-btn {
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     right: calc(20px + env(safe-area-inset-right, 0px));
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .home-btn {
-    font-size: 15px;
+    font-size: 16px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: calc(14px + env(safe-area-inset-left, 0px));
   }
@@ -613,7 +621,7 @@
      never zooms back out (page ends up stuck / white). Keep the CSS size at
      16px to suppress that; the modal's scale(0.79) makes it look ~12.6px. */
   .draft-text {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   /* Memo-card outlines: a touch thinner + denser dashes on mobile */
@@ -664,13 +672,13 @@
   }
 
   .window-username {
-    font-size: 14px;
+    font-size: 15px;
     height: 18px;
     line-height: 18px;
   }
 
   .window-text {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
   }
 
@@ -684,8 +692,8 @@
     inset: 30px 16px;
   }
 
-  .card-x { font-size: 16px; }
-  .card-edit { font-size: 13px; }
+  .card-x { font-size: 17px; }
+  .card-edit { font-size: 14px; }
 
   .rect-x { top: 7px; right: 9px; }
   .rect-edit { bottom: 7px; right: 10px; }

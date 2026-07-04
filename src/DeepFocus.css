@@ -31,7 +31,7 @@
 }
 
 .page-title {
-  font-size: clamp(16px, 1.67vw, 24px);
+  font-size: 24px;
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
   color: #000;
@@ -43,7 +43,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: clamp(16px, 1.67vw, 24px);
+  font-size: 24px;
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
   color: #000;
@@ -266,7 +266,7 @@
 .section-title {
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: clamp(15px, 1.53vw, 22px);
+  font-size: 22px;
   color: #000;
   margin: 0 0 12px 0;
   flex-shrink: 0;
@@ -1137,7 +1137,7 @@
 .breathing-start-new {
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: clamp(15px, 1.53vw, 22px);
+  font-size: 22px;
   color: #BBBBBB;
   position: relative;
   z-index: 1;
@@ -1152,7 +1152,7 @@
   left: calc(50% + 500px);
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: clamp(18px, 1.94vw, 28px);
+  font-size: 28px;
   color: #000;
   white-space: nowrap;
 }
@@ -1362,11 +1362,11 @@
   }
 
   .page-title {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .online-count {
-    font-size: 14px;
+    font-size: 15px;
     position: static;
     transform: none;
   }
@@ -1389,12 +1389,12 @@
   }
 
   .mode-toggle svg {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
 
   .timer-time-large {
-    font-size: 56px;
+    font-size: 57px;
   }
 
   .breathing-circle-new {
@@ -1412,16 +1412,16 @@
   }
 
   .nav-tab {
-    font-size: 13px;
+    font-size: 14px;
     padding: 6px 8px;
   }
 
   .section-title {
-    font-size: 18px;
+    font-size: 19px;
   }
 
   .home-btn {
-    font-size: 13px;
+    font-size: 14px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: calc(14px + env(safe-area-inset-left, 0px));
   }

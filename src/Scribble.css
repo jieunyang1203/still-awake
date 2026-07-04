@@ -25,7 +25,7 @@
 .scribble-title {
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: clamp(16px, 1.53vw, 22px);
+  font-size: 22px;
   color: #000;
   white-space: nowrap;
 }
@@ -33,7 +33,7 @@
 .scribble-description {
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: clamp(14px, 1.39vw, 20px);
+  font-size: 20px;
   color: #000;
   line-height: 1.3;
 }
@@ -70,7 +70,7 @@
 .online-label {
   font-family: 'PPEditorialNew', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: clamp(14px, 1.39vw, 20px);
+  font-size: 20px;
   color: #000;
 }
 
@@ -361,12 +361,20 @@
     right: 44px;
   }
 
+  .online-label {
+    font-size: 15px;
+  }
+
+  .online-star {
+    font-size: 15px;
+  }
+
   .scribble-title {
-    font-size: 19px;
+    font-size: 20px;
   }
 
   .scribble-description {
-    font-size: 16px;
+    font-size: 17px;
     /* Keep clear of the "* NN marks" counter (top-right) so they don't overlap */
     max-width: calc(100vw - 110px);
   }
@@ -400,7 +408,7 @@
 
   /* erase matches the back button size on mobile */
   .scribble-erase-btn {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .mode-toggle {
@@ -411,8 +419,8 @@
 
   .mode-toggle svg,
   .mode-toggle img {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
   }
 
   .scribble-online {
@@ -432,7 +440,7 @@
   }
 
   .home-btn {
-    font-size: 15px;
+    font-size: 16px;
     bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     left: calc(14px + env(safe-area-inset-left, 0px));
   }

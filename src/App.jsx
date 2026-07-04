@@ -52,14 +52,24 @@ function App() {
       let springVelocity = 0;
 
       p.setup = () => {
-        canvasSize = 890;
-        const canvas = p.createCanvas(canvasSize * 1.01, canvasSize * 1.01);
+        // Match the container's rendered size so the canvas isn't CSS-scaled —
+        // non-integer upscaling resamples the hairline rim into broken segments
+        canvasSize = sketchRef.current?.offsetWidth || 890;
+        const canvas = p.createCanvas(canvasSize, canvasSize);
         canvas.parent(sketchRef.current);
         p.angleMode(p.DEGREES);
         p.frameRate(30);
         p.textAlign(p.CENTER, p.CENTER);
         p.pixelDensity(Math.min(window.devicePixelRatio || 1, 2));
         p.textFont('Dotline');
+      };
+
+      p.windowResized = () => {
+        const w = sketchRef.current?.offsetWidth;
+        if (w && Math.abs(w - canvasSize) > 1) {
+          canvasSize = w;
+          p.resizeCanvas(w, w);
+        }
       };
 
       p.draw = () => {
@@ -69,7 +79,9 @@ function App() {
         p.translate(p.width / 2, p.height / 2);
 
         p.fill('rgba(255,255,255,0.65)');
-        p.strokeWeight(0.4);
+        // 0.55 keeps the hairline feel but stays above the subpixel threshold
+        // where antialiasing makes the rim look dashed
+        p.strokeWeight(0.55);
         p.stroke('rgba(0,0,0,0.8)');
         p.ellipse(0, 0, p.width * 0.997, p.height * 0.997);
 

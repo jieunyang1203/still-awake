@@ -90,9 +90,10 @@
 
   .description {
     text-align: left;
-    /* Scales like the original (up to 24px, larger than the 20px nav) but with
-       a raised floor so it never shrinks to a tiny 13px on narrow windows. */
-    font-size: clamp(18px, 1.67vw, 24px);
+    /* Fixed on desktop like the rest of the UI text — viewport-scaled sizes
+       made the top description shrink alone the moment the window narrowed.
+       Mobile sizes come from the media queries below. */
+    font-size: 24px;
     font-family: 'PPEditorialNew', -apple-system, sans-serif;
     font-weight: 200;
     line-height: 1.45;
@@ -108,8 +109,12 @@
 
   .clock-container {
     position: relative;
-    width: min(96vw, 96vh);
-    height: min(96vw, 96vh);
+    /* Cap by the real available space (viewport minus .container padding) so
+       flex never has to compress one axis — the clock must stay a perfect
+       circle at any window size. aspect-ratio + flex-shrink:0 lock the shape. */
+    width: min(96vw, 96vh, calc(100dvh - 40px), calc(100vw - 40px));
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
     z-index: 100;
     user-select: none;
     -webkit-user-select: none;
@@ -168,7 +173,10 @@
     font-family: 'SeasonSans', -apple-system, sans-serif;
     font-weight: 300;
     grid-area: 1 / 1;
-    padding: 0 4px 2px 12px;
+    /* Slightly wider than the input's own padding (4px right) so there's
+       always room for the caret — otherwise the input scrolls left a few px
+       while typing and clips the first letter. */
+    padding: 0 10px 2px 6px;
   }
 
   .nickname-input {
@@ -183,7 +191,7 @@
     width: 100%;
     min-width: 1px;
     grid-area: 1 / 1;
-    padding: 0 4px 2px 12px;
+    padding: 0 4px 2px 6px;
     margin: 0;
     user-select: text;
     -webkit-user-select: text;
@@ -384,12 +392,12 @@
   .nav-time,
   .tonight-label,
   .description {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .nickname-input,
   .nickname-sizer::after {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   /* Tighten the gap between "↘ tonight, you are:" and the input on mobile */
@@ -421,12 +429,12 @@
   .nav-time,
   .tonight-label,
   .description {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .nickname-input,
   .nickname-sizer::after {
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 

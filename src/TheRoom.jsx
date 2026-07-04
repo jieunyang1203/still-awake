@@ -19,19 +19,20 @@ import './TheRoom.css';
 
 const DESIGN_WIDTH = 1650;
 
-// Mobile canvas geometry (px, designed around a ~390px-wide screen). Same
-// free-drag canvas as desktop, just scattered to fit a portrait phone — sizes
-// kept similar with slight variation (no rotation).
+// Mobile canvas geometry (px, designed around a ~390px-wide screen). One wide
+// card per row, each overlapping the previous a little (stacked-paper feel);
+// slight x jitter keeps it from looking like a strict list. Fixed canvas (no
+// scroll), so the stack must stay inside ~840px of height.
 const MOBILE_GEO = {
-  mock1: { x: 8,   y: 118, width: 172, height: 172 }, // circle
-  mock2: { x: 198, y: 150, width: 178, height: 122 }, // rect
-  mock3: { x: 214, y: 298, width: 152, height: 152 }, // circle
-  mock4: { x: 16,  y: 318, width: 168, height: 128 }, // rect
-  mock5: { x: 178, y: 452, width: 182, height: 142 }, // rect
-  mock6: { x: 12,  y: 470, width: 160, height: 160 }, // circle
-  mock7: { x: 92,  y: 624, width: 186, height: 132 }, // rect
+  mock1: { x: 96,  y: 92,  width: 216, height: 130 }, // circle — center-top
+  mock2: { x: 12,  y: 200, width: 238, height: 138 }, // rect — left, tucks under mock1
+  mock3: { x: 166, y: 300, width: 220, height: 134 }, // circle — beside mock2's tail
+  mock4: { x: 34,  y: 404, width: 252, height: 122 }, // rect — wide left
+  mock5: { x: 150, y: 508, width: 226, height: 132 }, // rect — right
+  mock6: { x: 8,   y: 596, width: 224, height: 136 }, // circle — beside mock5
+  mock7: { x: 84,  y: 684, width: 244, height: 112 }, // rect — center-bottom
 };
-const MINE_MOBILE_GEO = { x: 212, y: 612, width: 158, height: 150 };
+const MINE_MOBILE_GEO = { x: 222, y: 700, width: 168, height: 106 };
 
 const INITIAL_MOCK = [
   { id: 'mock1', username: 'miwoo', shape: 'circle', x: 80, y: 90, width: 450, height: 290, text: 'look at my cat!', image: photo4 },
@@ -61,7 +62,7 @@ function TheRoom() {
   // Mobile drags are stored separately so they don't corrupt the desktop
   // canvas coordinates (different layout / coordinate space).
   const [mobilePositions, setMobilePositions] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('roomPositionsMobile') || '{}'); }
+    try { return JSON.parse(localStorage.getItem('roomPositionsMobile-v2') || '{}'); }
     catch (_) { return {}; }
   });
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 480);
@@ -110,7 +111,7 @@ function TheRoom() {
     document.body.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
   useEffect(() => { localStorage.setItem('roomPositions-v2', JSON.stringify(positions)); }, [positions]);
-  useEffect(() => { localStorage.setItem('roomPositionsMobile', JSON.stringify(mobilePositions)); }, [mobilePositions]);
+  useEffect(() => { localStorage.setItem('roomPositionsMobile-v2', JSON.stringify(mobilePositions)); }, [mobilePositions]);
 
   const posMap = isMobile ? mobilePositions : positions;
   const setPosMap = isMobile ? setMobilePositions : setPositions;
