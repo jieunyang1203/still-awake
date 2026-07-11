@@ -272,7 +272,7 @@
   }
 
   .archive-description {
-    font-size: 17px;
+    font-size: 15px;
     max-width: 70vw;
   }
 
@@ -290,7 +290,7 @@
 
   .whisper-area {
     margin-left: 16px;
-    margin-top: 22px;
+    margin-top: 8px;
   }
 
   /* Layout width is larger so the 0.8 scale below lands at the intended

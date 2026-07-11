@@ -374,7 +374,7 @@
   }
 
   .scribble-description {
-    font-size: 17px;
+    font-size: 15px;
     /* Keep clear of the "* NN marks" counter (top-right) so they don't overlap */
     max-width: calc(100vw - 110px);
   }
