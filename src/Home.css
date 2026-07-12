@@ -378,6 +378,12 @@
   .box-text {
     font-size: 17px;
   }
+
+  /* Match the room cards' outline: a touch thinner + denser dashes */
+  .dashed-box ellipse {
+    stroke-width: 0.6;
+    stroke-dasharray: 3 2;
+  }
 }
 
 /* Compact phones (iPhone SE, mini — ≤375px) */

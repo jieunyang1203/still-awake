@@ -304,7 +304,7 @@
      focus; shrink the whole field (border + text) visually via transform. */
   .whisper-input {
     height: 26px;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .whisper-input-wrap {
@@ -316,7 +316,7 @@
      no zoom concern, so just size them down directly. */
   .whisper-falling-char,
   .whisper-landed-char {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .archive-online {

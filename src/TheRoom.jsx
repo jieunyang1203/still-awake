@@ -110,8 +110,8 @@ function TheRoom() {
     document.body.classList.remove('landing');
     document.body.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
-  useEffect(() => { localStorage.setItem('roomPositions-v2', JSON.stringify(positions)); }, [positions]);
-  useEffect(() => { localStorage.setItem('roomPositionsMobile-v2', JSON.stringify(mobilePositions)); }, [mobilePositions]);
+  useEffect(() => { try { localStorage.setItem('roomPositions-v2', JSON.stringify(positions)); } catch (_) {} }, [positions]);
+  useEffect(() => { try { localStorage.setItem('roomPositionsMobile-v2', JSON.stringify(mobilePositions)); } catch (_) {} }, [mobilePositions]);
 
   const posMap = isMobile ? mobilePositions : positions;
   const setPosMap = isMobile ? setMobilePositions : setPositions;
@@ -149,16 +149,18 @@ function TheRoom() {
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        if (!dragRef.current) return;
-        const dx = (dragRef.current.latestX - dragRef.current.startX) / scaleRef.current;
-        const dy = (dragRef.current.latestY - dragRef.current.startY) / scaleRef.current;
-        setPosMap(prev => ({
-          ...prev,
-          [dragRef.current.id]: {
-            x: dragRef.current.origX + dx,
-            y: Math.max(dragRef.current.minY, dragRef.current.origY + dy),
-          },
-        }));
+        // Snapshot before setState: the updater runs later, and a fast tap can
+        // null dragRef (pointerup) in between — dereferencing it there crashed
+        // the whole app to a white screen on mobile.
+        const drag = dragRef.current;
+        if (!drag) return;
+        const dx = (drag.latestX - drag.startX) / scaleRef.current;
+        const dy = (drag.latestY - drag.startY) / scaleRef.current;
+        const next = {
+          x: drag.origX + dx,
+          y: Math.max(drag.minY, drag.origY + dy),
+        };
+        setPosMap(prev => ({ ...prev, [drag.id]: next }));
       });
     };
 
