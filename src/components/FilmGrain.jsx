@@ -23,7 +23,7 @@ function FilmGrain({ intensityScale = 1 }) {
     timerId = setInterval(() => {
       seed = (seed + 1) % 9999;
       turb.setAttribute('seed', seed);
-    }, 500);
+    }, 700);
 
     // Hide during resize to prevent per-pixel filter recomputation on every resize event
     const handleResize = () => {
@@ -71,7 +71,7 @@ function FilmGrain({ intensityScale = 1 }) {
           colorInterpolationFilters="sRGB">
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.72"
+            baseFrequency="0.85"
             numOctaves="2"
             seed="0"
             stitchTiles="stitch"

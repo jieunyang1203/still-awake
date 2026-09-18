@@ -33,7 +33,7 @@ function Scribble() {
   const [color, setColor] = useState(PALETTE[0]);
   const [brushSize, setBrushSize] = useState(4);
   const [eraserSize, setEraserSize] = useState(14);
-  const [isEraser, setIsEraser] = useState(false);
+  const [tool, setTool] = useState('pen'); // 'pen' | 'brush' | 'eraser'
   const [drawnCount, incrementDrawn] = useDrawnCount();
 
   const canvasRef = useRef(null);
@@ -55,38 +55,50 @@ function Scribble() {
   const drawStroke = (ctx, stroke) => {
     if (stroke.points.length < 2) return;
     const pts = stroke.points;
+    // Back-compat: older saved strokes only stored an `eraser` flag.
+    const tool = stroke.tool || (stroke.eraser ? 'eraser' : 'pen');
 
-    ctx.globalCompositeOperation = stroke.eraser ? 'destination-out' : 'source-over';
+    ctx.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
     ctx.strokeStyle = stroke.color;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // Primary pass — slightly translucent, bezier curves for organic shape
-    ctx.globalAlpha = stroke.eraser ? 1 : 0.82;
-    ctx.lineWidth = stroke.size;
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length - 1; i++) {
-      const mx = (pts[i].x + pts[i + 1].x) / 2;
-      const my = (pts[i].y + pts[i + 1].y) / 2;
-      ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
-    }
-    ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
-    ctx.stroke();
-
-    // Secondary pass — thin offset layer for crayon/marker texture
-    if (!stroke.eraser && stroke.size > 1) {
-      ctx.globalAlpha = 0.18;
-      ctx.lineWidth = stroke.size * 0.45;
+    // Draw the bezier-smoothed path, optionally offset (for the pen's texture pass).
+    const path = (ox = 0, oy = 0) => {
       ctx.beginPath();
-      ctx.moveTo(pts[0].x + 1.2, pts[0].y + 0.6);
+      ctx.moveTo(pts[0].x + ox, pts[0].y + oy);
       for (let i = 1; i < pts.length - 1; i++) {
-        const mx = (pts[i].x + pts[i + 1].x) / 2 + 1.2;
-        const my = (pts[i].y + pts[i + 1].y) / 2 + 0.6;
-        ctx.quadraticCurveTo(pts[i].x + 1.2, pts[i].y + 0.6, mx, my);
+        const mx = (pts[i].x + pts[i + 1].x) / 2 + ox;
+        const my = (pts[i].y + pts[i + 1].y) / 2 + oy;
+        ctx.quadraticCurveTo(pts[i].x + ox, pts[i].y + oy, mx, my);
       }
-      ctx.lineTo(pts[pts.length - 1].x + 1.2, pts[pts.length - 1].y + 0.6);
+      ctx.lineTo(pts[pts.length - 1].x + ox, pts[pts.length - 1].y + oy);
       ctx.stroke();
+    };
+
+    if (tool === 'eraser') {
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = stroke.size;
+      path();
+    } else if (tool === 'brush') {
+      // Soft brush — a few translucent passes of decreasing width feather the
+      // edge into a soft, blended stroke (no crisp outline like the pen).
+      const passes = [[1.8, 0.06], [1.3, 0.10], [0.85, 0.22], [0.5, 0.30]];
+      for (const [wm, a] of passes) {
+        ctx.globalAlpha = a;
+        ctx.lineWidth = Math.max(0.5, stroke.size * wm);
+        path();
+      }
+    } else {
+      // Pen — original crisp stroke + a thin offset crayon-texture pass.
+      ctx.globalAlpha = 0.82;
+      ctx.lineWidth = stroke.size;
+      path();
+      if (stroke.size > 1) {
+        ctx.globalAlpha = 0.18;
+        ctx.lineWidth = stroke.size * 0.45;
+        path(1.2, 0.6);
+      }
     }
 
     ctx.globalAlpha = 1;
@@ -142,7 +154,7 @@ function Scribble() {
     e.preventDefault();
     canvasRef.current.setPointerCapture(e.pointerId);
     drawingRef.current = true;
-    currentStrokeRef.current = { points: [getPoint(e)], color, size: isEraser ? eraserSize : brushSize, eraser: isEraser };
+    currentStrokeRef.current = { points: [getPoint(e)], color, size: tool === 'eraser' ? eraserSize : brushSize, tool };
   };
 
   const handlePointerMove = (e) => {
@@ -171,12 +183,11 @@ function Scribble() {
 
       <div className="scribble-header">
         <span className="scribble-title">Scribble</span>
+        <div className="scribble-online">
+          <span className="online-star">*</span>
+          <span className="online-label">{String(drawnCount).padStart(2, '0')} marks</span>
+        </div>
         <span className="scribble-description">make a mark on the shared page. it belongs to everyone who's here tonight.</span>
-      </div>
-
-      <div className="scribble-online">
-        <span className="online-star">*</span>
-        <span className="online-label">{String(drawnCount).padStart(2, '0')} marks</span>
       </div>
 
       <div className="scribble-canvas-frame">
@@ -192,47 +203,61 @@ function Scribble() {
       </div>
 
       <div className="scribble-toolbar">
-        <div className="scribble-pen-group">
-          <input
-            type="range"
-            className="scribble-slider"
-            min={1} max={20}
-            value={brushSize}
-            onChange={e => { setBrushSize(Number(e.target.value)); setIsEraser(false); }}
-          />
-          <div className="scribble-colors">
+        <div className="scribble-tools">
+          <div className="tool-selector">
+            <button
+              className={`tool-btn ${tool === 'pen' ? 'active' : ''}`}
+              onClick={() => setTool('pen')}
+            >pen</button>
+            <span className="tool-sep">/</span>
+            <button
+              className={`tool-btn ${tool === 'brush' ? 'active' : ''}`}
+              onClick={() => setTool('brush')}
+            >brush</button>
+            <span className="tool-sep">/</span>
+            <button
+              className={`tool-btn ${tool === 'eraser' ? 'active' : ''}`}
+              onClick={() => setTool('eraser')}
+            >eraser</button>
+          </div>
+
+          <div className={`scribble-colors ${tool === 'eraser' ? 'is-dimmed' : ''}`}>
             {PALETTE.map((c) => (
               <button
                 key={c}
-                className={`pen-blob-btn ${!isEraser && color === c ? 'active' : ''}`}
+                className={`pen-blob-btn ${tool !== 'eraser' && color === c ? 'active' : ''}`}
                 style={{
                   color: c,
                   WebkitMaskImage: `url(${penSvg})`,
                   maskImage: `url(${penSvg})`,
                 }}
-                onClick={() => { setColor(c); setIsEraser(false); }}
+                onClick={() => { setColor(c); if (tool === 'eraser') setTool('pen'); }}
                 aria-label={`color ${c}`}
               />
             ))}
           </div>
         </div>
 
-        <div className="scribble-erase-group">
-          <input
-            type="range"
-            className="scribble-slider scribble-slider--erase"
-            min={5} max={40}
-            value={eraserSize}
-            onChange={e => setEraserSize(Number(e.target.value))}
-          />
-          <button
-            className={`scribble-erase-btn ${isEraser ? 'active' : ''}`}
-            onClick={() => setIsEraser(v => !v)}
-          >
-            erase
-          </button>
+        <div className="scribble-size">
+          <div className="size-slider-row">
+            <span className="size-sign">−</span>
+            <div className="slider-track-wrap">
+              <input
+                type="range"
+                className="scribble-slider"
+                min={tool === 'eraser' ? 5 : 1}
+                max={tool === 'eraser' ? 40 : 20}
+                value={tool === 'eraser' ? eraserSize : brushSize}
+                onChange={e => {
+                  const v = Number(e.target.value);
+                  if (tool === 'eraser') setEraserSize(v);
+                  else setBrushSize(v);
+                }}
+              />
+            </div>
+            <span className="size-sign">+</span>
+          </div>
         </div>
-
       </div>
 
       <div className="mode-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>

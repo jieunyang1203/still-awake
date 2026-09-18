@@ -1,3 +1,14 @@
+/* RESPONSIVE POLICY — one breakpoint, then crop.
+   There used to be a whole intermediate "tablet" layer at max-width:768px plus
+   two max-height layers, and they only covered SOME elements: at 900px wide the
+   title and buttons had shrunk while the online counter and toolbar were still
+   at desktop size, so narrowing the window rescaled parts of the page against
+   each other. Those layers are gone. Desktop values now hold all the way down
+   to 481px and the only meaningful change is the jump into the mobile block —
+   below that the layout is fixed and simply gets cropped by the viewport,
+   which is what the landing clock already did on purpose. Anything sized in vh
+   was frozen to what it computed at the working canvas, so the desktop view is
+   unchanged. Don't reintroduce a middle breakpoint. */
 /* Home.css */
 .home-page {
   background: #F3F3F3;
@@ -27,10 +38,10 @@
 }
 
 .home-greeting {
-  font-size: 20px;
+  font-size: 24px;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  color: #000;
+  color: #3E3E40;
   white-space: nowrap;
   flex-shrink: 0;
   margin-left: 20px;
@@ -42,11 +53,12 @@
 
 .access-text {
   text-align: left;
-  font-size: 20px;
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-size: 27px;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
   line-height: 1.4;
-  color: #000;
+  color: #3E3E40;
   flex: 1;
   margin: 0;
   padding-right: 20px;
@@ -59,7 +71,12 @@
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(clamp(300px, 140vw, 1450px), calc(83vh * 1.7));
+  /* Fixed, like the landing clock. The old min(1450px, 83vh*1.7) was meant to
+     "crop, not shrink", but tying it to vh meant it still shrank whenever the
+     window got shorter — the SVG visibly rescaled. 1400px is what that formula
+     resolved to on the working canvas, so the desktop view is unchanged; a
+     narrow or short window now crops it instead. */
+  width: 1400px;
   height: auto;
 }
 
@@ -79,10 +96,11 @@
 }
 
 .online-text {
-  font-size: 20px;
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-size: 27px;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  color: #000;
+  color: #3E3E40;
   white-space: nowrap;
 }
 
@@ -98,7 +116,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(24px, 4.17vw, 60px);
+  gap: 60px;
   width: 65%;
 }
 
@@ -106,7 +124,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: clamp(24px, 5.21vw, 75px);
+  gap: 75px;
   width: 100%;
 }
 
@@ -120,7 +138,7 @@
   cursor: pointer;
   flex: 1;
   position: relative;
-  --dash-color: black;
+  --dash-color: #3E3E40;
 }
 
 .dashed-box-top {
@@ -129,57 +147,12 @@
 }
 
 .box-text {
-  font-size: 22px;
+  font-size: 24px;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
   line-height: 1.4;
-  color: #000;
+  color: #3E3E40;
   text-align: center;
-}
-
-@media (max-width: 768px) {
-  .house-container {
-    width: min(clamp(250px, 100vw, 800px), calc(80vh * 1.7));
-    bottom: 20px;
-  }
-
-  .dashed-boxes {
-    gap: 20px;
-    width: 70%;
-  }
-
-  .dashed-boxes-bottom {
-    gap: 20px;
-  }
-}
-
-@media (max-height: 800px) and (min-height: 601px) {
-  .dashed-boxes {
-    top: 60%;
-    gap: 35px;
-    width: 60%;
-  }
-
-  .dashed-boxes-bottom {
-    gap: 45px;
-  }
-}
-
-@media (max-height: 600px) {
-  .house-container {
-    width: clamp(200px, 80vw, 600px);
-    bottom: 10px;
-  }
-
-  .dashed-boxes {
-    top: 62%;
-    gap: 15px;
-    width: 55%;
-  }
-
-  .dashed-boxes-bottom {
-    gap: 15px;
-  }
 }
 
 /* Dark mode styles */
@@ -241,7 +214,7 @@
   pointer-events: none;
 }
 
-.house-mobile-svg line { stroke: #000; }
+.house-mobile-svg line { stroke: #3E3E40; }
 .home-page.dark-mode .house-mobile-svg line { stroke: #F3F3F3; }
 
 /* Mode toggle styles */
@@ -257,10 +230,10 @@
 .mode-toggle svg {
   display: block;
   transition: filter 0.3s ease;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 0 3px rgba(62, 62, 64, 0.15));
 }
 
-.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .sun { stroke: #3E3E40; }
 .mode-toggle svg .moon { display: none; }
 
 .mode-toggle svg.dark {
@@ -278,29 +251,46 @@
   .home-container {
     display: flex;
     flex-direction: column;
-    padding: 14px 16px 60px;
+    padding: 14px 12px 60px;
   }
 
   .top-content {
     flex-shrink: 0;
-    height: 28px;
+    height: auto;
     align-items: flex-start;
   }
 
   .home-greeting {
     margin-left: 0;
-    font-size: 16px;
+    font-size: clamp(19px, 5.128vw, 22px);
   }
 
+  /* "Current time" keeps the left alignment it always had; only "Hours until
+     opening" is pushed out to the right gutter. space-between does that
+     without either half being aligned on its own, so both stay on one line
+     and each sits flush against its own margin. Wrapping is allowed because
+     the pair very nearly fills 390px at 20px — if a longer clock string ever
+     pushes past, the second half drops to its own right-aligned line rather
+     than overflowing. */
   .access-text {
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    column-gap: 8px;
     position: fixed;
     bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-    left: 16px;
-    right: 16px;
+    left: 12px;
+    right: 12px;
     padding-right: 0;
-    font-size: 17px;
-    line-height: 1.4;
+    font-size: clamp(19px, 5.128vw, 22px);
+    line-height: 1.25;
     z-index: 5;
+  }
+
+  .access-until {
+    margin-left: auto;
   }
 
   .access-restricted {
@@ -309,7 +299,7 @@
 
   .mode-toggle {
     top: 14px !important;
-    right: 14px !important;
+    right: 12px !important;
     transform: none !important;
   }
 
@@ -319,20 +309,35 @@
     height: 20px !important;
   }
 
-  /* Stars smaller on mobile */
+  /* Anchored to the nav labels, not copied from desktop. Home.jsx sets 34px
+     inline, which is the desktop size and pairs with the 24px desktop nav at
+     1.42x. The mobile nav is 20px, so inheriting 34px pushed that ratio to
+     1.70x and the stars read oversized. 28px puts it back at 1.40x — the same
+     relationship the desktop composition has. (An earlier pass halved it to
+     17px, which went too far the other way and left them as specks.)
+     !important is required: it has to beat the inline style on the element. */
   .star {
-    font-size: 17px !important;
+    font-size: 28px !important;
   }
 
+
+  /* margin:auto centres the house in the leftover column space; `top` then
+     nudges it down from there. Shrinking the height alone would NOT move it
+     down — it would grow the gap at both ends — so the two values are tuned
+     together: 58dvh for the size, 11vh to push it past centre toward the
+     clock line at the bottom. The pieces inside (.house-online-count,
+     .dashed-boxes) are positioned in % of this box, so they follow on their
+     own. The inline SVG uses preserveAspectRatio="none", so a shorter box
+     also flattens the roof pitch. */
   .house-container {
     position: relative;
     bottom: auto;
     left: auto;
     transform: none;
-    top: 5vh;
+    top: 11vh;
     width: 100%;
-    height: 64vh;
-    height: 64dvh;
+    height: 58vh;
+    height: 58dvh;
     flex: none;
     margin-top: auto;
     margin-bottom: auto;
@@ -347,7 +352,7 @@
   }
 
   .online-text {
-    font-size: 16px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   /* Three nav ovals stacked vertically, all inside the house body */
@@ -376,7 +381,7 @@
   }
 
   .box-text {
-    font-size: 17px;
+    font-size: clamp(19px, 5.128vw, 22px);
   }
 
   /* Match the room cards' outline: a touch thinner + denser dashes */
@@ -388,17 +393,10 @@
 
 /* Compact phones (iPhone SE, mini — ≤375px) */
 @media (max-width: 375px) {
-  .home-greeting {
-    font-size: 14px;
-  }
-
-  .access-text {
-    font-size: 16px;
-  }
 
   .house-container {
-    height: 58vh;
-    height: 58dvh;
+    height: 53vh;
+    height: 53dvh;
   }
 
   .dashed-boxes {
@@ -409,13 +407,5 @@
 
   .dashed-boxes-bottom {
     gap: 11px;
-  }
-
-  .box-text {
-    font-size: 15px;
-  }
-
-  .online-text {
-    font-size: 15px;
   }
 }

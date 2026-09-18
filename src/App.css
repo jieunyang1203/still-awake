@@ -16,7 +16,7 @@
   
   .container {
     width: 100%;
-    padding: 20px;
+    padding: 1.25rem;
     height: 100vh;
     height: 100dvh;
     display: flex;
@@ -29,10 +29,12 @@
 
   .landing-description {
     position: fixed;
-    top: clamp(8px, 1vw, 15px);
+    top: 0.85rem;
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100vw - clamp(16px, 2.8vw, 40px)) !important;
+    /* Width stays viewport-relative so the top line always fits/wraps and never
+       gets cropped off-screen (only its font-size rides the rem scale). */
+    width: calc(100vw - 2rem) !important;
     max-width: none !important;
     z-index: 1;
     pointer-events: none;
@@ -41,16 +43,25 @@
 
   .landing-bottom-left {
     position: fixed;
-    bottom: clamp(8px, 1vw, 15px);
-    left: clamp(8px, 1.7vw, 24px);
+    bottom: 0.85rem;
+    left: 1.25rem;
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 0.25rem;
   }
 
   .landing-bottom-left.text-base-layer {
+    z-index: 11;
+  }
+
+  /* The white layer must sit at the SAME z-index as the base layer so DOM order
+     decides — white (rendered later) lands on top, exactly like the bottom-right
+     pair where both are z-index 10. Left it at 10 and the black base painted
+     over the white text, so "To Lobby" and "Hours until opening" read as if they
+     were color-cycling out of sync even though their opacities are identical. */
+  .landing-bottom-left.text-white-layer {
     z-index: 11;
   }
 
@@ -60,16 +71,17 @@
 
   .landing-bottom-right {
     position: fixed;
-    bottom: clamp(8px, 1vw, 15px);
-    right: clamp(8px, 1.7vw, 24px);
+    bottom: 0.85rem;
+    right: 1.25rem;
     z-index: 10;
   }
 
   .nav-workspace {
-    font-size: 20px;
-    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-size: 1.6875rem;
+    font-family: 'PPNeueWorld', -apple-system, sans-serif;
+    letter-spacing: normal;
     font-weight: 200;
-    color: #000000;
+    color: #3E3E40;
     cursor: pointer;
     text-shadow:
       0 0 4px rgba(243,243,243,0.9),
@@ -78,10 +90,11 @@
   }
 
   .nav-time {
-    font-size: 20px;
-    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-size: 1.6875rem;
+    font-family: 'PPNeueWorld', -apple-system, sans-serif;
+    letter-spacing: normal;
     font-weight: 200;
-    color: #000000;
+    color: #3E3E40;
     text-shadow:
       0 0 4px rgba(243,243,243,0.9),
       0 0 12px rgba(243,243,243,0.5),
@@ -93,11 +106,12 @@
     /* Fixed on desktop like the rest of the UI text — viewport-scaled sizes
        made the top description shrink alone the moment the window narrowed.
        Mobile sizes come from the media queries below. */
-    font-size: 24px;
-    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-size: 1.6875rem;
+    font-family: 'PPNeueWorld', -apple-system, sans-serif;
+    letter-spacing: normal;
     font-weight: 200;
-    line-height: 1.45;
-    color: #000000;
+    line-height: 1.2;
+    color: #3E3E40;
     width: 100%;
     max-width: none;
     text-shadow:
@@ -109,10 +123,11 @@
 
   .clock-container {
     position: relative;
-    /* Cap by the real available space (viewport minus .container padding) so
-       flex never has to compress one axis — the clock must stay a perfect
-       circle at any window size. aspect-ratio + flex-shrink:0 lock the shape. */
-    width: min(96vw, 96vh, calc(100dvh - 40px), calc(100vw - 40px));
+    /* Fixed (rem) size on the design canvas: ~730px at 1280×800. It rides the
+       rem scale (grows above 1280, frozen below) instead of shrinking with the
+       viewport — so a narrow/short window crops the clock rather than squashing
+       it. aspect-ratio + flex-shrink:0 keep it a perfect circle. */
+    width: 58rem;
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
     z-index: 100;
@@ -142,17 +157,18 @@
   .nickname-box {
     display: flex;
     align-items: baseline;
-    gap: 4px;
+    gap: 0.125rem;
     width: fit-content;
   }
 
   .tonight-label {
-    font-size: 20px;
-    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-size: 1.6875rem;
+    font-family: 'PPNeueWorld', -apple-system, sans-serif;
+    letter-spacing: normal;
     font-weight: 200;
-    color: #000;
+    color: #3E3E40;
     white-space: nowrap;
-    margin-right: 4px;
+    margin-right: 0.125rem;
     text-shadow:
       0 0 4px rgba(243,243,243,0.9),
       0 0 12px rgba(243,243,243,0.5),
@@ -169,21 +185,26 @@
     content: attr(data-value);
     visibility: hidden;
     white-space: pre;
-    font-size: 17px;
+    font-size: 1.5rem;
     font-family: 'SeasonSans', -apple-system, sans-serif;
     font-weight: 300;
     grid-area: 1 / 1;
     /* Slightly wider than the input's own padding (4px right) so there's
        always room for the caret — otherwise the input scrolls left a few px
        while typing and clips the first letter. */
-    padding: 0 10px 2px 6px;
+    padding: 0 0.625rem 0.125rem 0.375rem;
   }
 
   .nickname-input {
-    font-size: 17px;
+    font-size: 1.5rem;
     font-family: 'SeasonSans', -apple-system, sans-serif;
     font-weight: 300;
-    color: #888;
+    color: #4D4D4D;
+    animation: nickname-tint 33s linear infinite;
+    text-shadow:
+      0 0 4px rgba(243,243,243,0.9),
+      0 0 12px rgba(243,243,243,0.5),
+      0 0 24px rgba(243,243,243,0.25);
     background: transparent;
     border: none;
     border-bottom: none;
@@ -191,14 +212,22 @@
     width: 100%;
     min-width: 1px;
     grid-area: 1 / 1;
-    padding: 0 4px 2px 6px;
+    padding: 0 0.25rem 0.125rem 0.375rem;
     margin: 0;
     user-select: text;
     -webkit-user-select: text;
   }
 
   .nickname-input::placeholder {
-    color: #aaa;
+    color: inherit;
+  /* opacity, not a lighter colour. The placeholder inherits .nickname-input's
+     colour, which is animated (#4D4D4D <-> #F3F3F3 over 33s to stay in phase
+     with the background), so hard-coding a paler value would break that cycle.
+     opacity:1 was defeating the browser's own placeholder dimming, which is
+     why it read heavier than the neighbouring text even though its colour
+     value is LIGHTER (rgb 113 vs the nav/description's rgb 62) — the weight
+     difference does it: 300 sans here against 200 thin serif there. */
+    opacity: 0.5;
   }
 
 
@@ -247,6 +276,19 @@
     67%  { opacity: 1; animation-timing-function: ease-out; }
     80%  { opacity: 0; }
     100% { opacity: 0; }
+  }
+
+  /* Nickname text cycles black<->white on the SAME schedule as the base/white
+     text layers (same %s and easing as text-white-fade). Because the input
+     mounts late (on click), App sets a negative animation-delay inline so this
+     stays in phase with the always-running background/text layers. */
+  @keyframes nickname-tint {
+    0%   { color: #4D4D4D; }
+    20%  { color: #4D4D4D; animation-timing-function: ease-in; }
+    33%  { color: #F3F3F3; animation-timing-function: linear; }
+    67%  { color: #F3F3F3; animation-timing-function: ease-out; }
+    80%  { color: #4D4D4D; }
+    100% { color: #4D4D4D; }
   }
 
   .text-white-layer {
@@ -300,19 +342,23 @@
   .app-page .nav-time,
   .app-page .description,
   .app-page .tonight-label {
-    color: #000000;
+    color: #3E3E40;
     text-shadow:
       0 0 4px rgba(243,243,243,0.9),
       0 0 12px rgba(243,243,243,0.5),
       0 0 24px rgba(243,243,243,0.25);
   }
 
+  /* (Serif hairline stroke for .nav-workspace / .nav-time / .description /
+     .tonight-label lives with the other serif elements in index.css) */
+
   .app-page .nickname-input {
-    color: #888888;
+    color: #4D4D4D;
   }
 
   .app-page .nickname-input::placeholder {
-    color: #aaa;
+    color: inherit;
+    opacity: 0.5;
   }
 
   /* Mobile nickname modal — centered, blurs the page behind it */
@@ -337,18 +383,18 @@
   }
 
   .nickname-modal-label {
-    font-family: 'PPEditorialNew', -apple-system, sans-serif;
+    font-family: 'PPNeueWorld', -apple-system, sans-serif;
+    letter-spacing: normal;
     font-weight: 200;
-    font-size: 18px;
-    color: #000;
+    font-size: 20px;
+    color: #3E3E40;
     white-space: nowrap;
   }
 
   .nickname-modal-input {
     font-family: 'SeasonSans', -apple-system, sans-serif;
     font-weight: 300;
-    /* 16px keeps iOS Safari from auto-zooming on focus */
-    font-size: 16px;
+    font-size: 20px;
     text-align: center;
     color: #888;
     background: transparent;
@@ -366,25 +412,68 @@
   }
 
 @media (max-width: 480px) {
+  /* Every element that carries meaning sits RIGHT of the pivot: the numbers are
+     drawn over -60deg..+60deg, and the needle sweeps 30deg..150deg, whose tip
+     x is L*sin(theta) — positive across the whole sweep. So the dial's left
+     half is dead space. Rather than spend viewport on it, the clock is drawn
+     large and hung off the left edge, which is what the original 150vw +
+     translateX(-35.5vw) was doing.
+
+     Anchoring: the circle's right rim is pinned 4vw in from the right edge, and
+     the offset is derived from the size (rather than a matching hand-tuned vw)
+     so the composition survives the dvh cap shrinking the clock — otherwise a
+     capped size would slide the dial away from its anchor. Element centre sits
+     at 50vw by default, rim is 0.4985*S out, hence 96vw - 0.4985*S - 50vw.
+
+     Ink extents, measured against the real Dotline metrics at
+     textAlign(CENTER, CENTER):
+       horizontal  "3" at 0deg   -> 0.4345*S from centre  (rim is 0.4985*S)
+       vertical    "1"/"5"       -> 0.4204*S from centre
+
+     Pinning the rim is what makes the horizontal side safe for free: the
+     numbers land at 96vw - 0.064*S, i.e. they move further IN as the clock
+     grows, so no size clips them. The two real ceilings are vertical — numbers
+     touch the top/bottom edge at 118.9dvh, hence the 110dvh cap — and the
+     pivot walking off the left edge at 192.6vw.
+
+     Overlapping the landing copy is intentional (it does on desktop too), so
+     150vw is nowhere near a limit; it just read as too big on a phone. 130vw
+     keeps the left crop unmistakable while calming it down. Anything under
+     ~96vw stops cropping altogether and goes back to looking accidental. */
   .clock-container {
-    width: 150vw;
-    height: 150vw;
+    --clock-size: min(130vw, 110dvh);
+    width: var(--clock-size);
+    height: auto;
     /* Stay a perfect circle even when dvh < height — never let flex compress
        the height (which would squash the clock into an ellipse). */
     flex-shrink: 0;
     aspect-ratio: 1;
-    transform: translateX(-35.5vw);
+    transform: translateX(calc(46vw - 0.4985 * var(--clock-size)));
   }
 
   .time-prefix {
     display: inline;
   }
 
+  /* TEMP: tighter side gutter on mobile — was 16px on the description
+     (calc(100vw - 2rem)) and 20px (1.25rem) on .container / the bottom nav.
+     Unified to 12px so all three edges line up. */
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .landing-description {
+    width: calc(100vw - 24px) !important;
+  }
+
   .landing-bottom-left {
+    left: 12px;
     bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   }
 
   .landing-bottom-right {
+    right: 12px;
     bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -392,12 +481,12 @@
   .nav-time,
   .tonight-label,
   .description {
-    font-size: 17px;
+    font-size: 20px;
   }
 
   .nickname-input,
   .nickname-sizer::after {
-    font-size: 16px;
+    font-size: 20px;
   }
 
   /* Tighten the gap between "↘ tonight, you are:" and the input on mobile */
@@ -417,24 +506,21 @@
 
 /* Compact phones (iPhone SE, mini — ≤375px) */
 @media (max-width: 375px) {
-  .clock-container {
-    width: 145vw;
-    height: 145vw;
-    flex-shrink: 0;
-    aspect-ratio: 1;
-    transform: translateX(-33.5vw);
-  }
+  /* No .clock-container override here on purpose — the ≤480px rule is written
+     entirely in vw/dvh and anchors itself off its own size, so it already
+     scales down to compact phones. A second hand-tuned copy would just be one
+     more thing to keep in sync. */
 
   .nav-workspace,
   .nav-time,
   .tonight-label,
   .description {
-    font-size: 16px;
+    font-size: 19px;
   }
 
   .nickname-input,
   .nickname-sizer::after {
-    font-size: 15px;
+    font-size: 19px;
   }
 }
 

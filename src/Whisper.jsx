@@ -10,7 +10,7 @@ import './Whisper.css';
 
 const STORAGE_KEY = 'whisper-chars-v6';
 const TODAY_KEY = new Date().toDateString();
-const getCharWidth = (c) => /[가-힣ᄀ-ᇿ㄰-㆏]/.test(c) ? 20 : 10;
+const getCharWidth = (c) => /[가-힣ᄀ-ᇿ㄰-㆏]/.test(c) ? 28 : 14;
 
 // A few characters that are always scattered at the bottom, even before
 // anyone types anything, so the page never looks completely empty.
@@ -31,6 +31,24 @@ const DEFAULT_LANDED = [
   { id: 'd14', char: 'r', left: '92%', top: '92%', rotation: 2 },
   { id: 'd15', char: 'e', left: '96%', top: '90%', rotation: -2 },
 ];
+
+// Deterministic per-character float params (stable across renders, but varied
+// per id) so each landed letter drifts with its OWN amplitude, speed, direction
+// and phase — not the same path merely time-shifted.
+const floatParams = (id) => {
+  let h = 0;
+  const s = String(id);
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) >>> 0;
+  const rand = () => { h = (Math.imul(h, 1103515245) + 12345) >>> 0; return h / 4294967296; };
+  const dur = 4.5 + rand() * 4;          // 4.5–8.5s (slow, graceful)
+  const delay = -rand() * dur;           // negative → already mid-drift, desynced
+  const fx = (rand() * 2 - 1) * 4;       // −4 … +4 px  (direction varies)
+  const fy = -(4 + rand() * 5);          // −9 … −4 px (mostly upward)
+  return {
+    dur: dur.toFixed(2), delay: delay.toFixed(2),
+    fx: fx.toFixed(1), fy: fy.toFixed(1),
+  };
+};
 
 function Whisper() {
   const navigate = useNavigate();
@@ -118,19 +136,18 @@ function Whisper() {
     e.target.value = '';
   };
 
-  const charColor = isDarkMode ? '#F3F3F3' : '#000';
+  const charColor = isDarkMode ? '#F3F3F3' : '#3E3E40';
 
   return (
     <div className={`archive-page ${isDarkMode ? 'dark-mode' : ''}`}>
       <FilmGrain intensityScale={0.5} />
       <div className="archive-header">
         <span className="archive-title">Whisper..</span>
+        <div className="archive-online">
+          <span className="online-star">*</span>
+          <span className="online-label">{String(writtenCount).padStart(2, '0')} sent</span>
+        </div>
         <span className="archive-description">say something. it doesn't have to reach anyone. words fade slowly, but they were here.</span>
-      </div>
-
-      <div className="archive-online">
-        <span className="online-star">*</span>
-        <span className="online-label">{String(writtenCount).padStart(2, '0')} sent</span>
       </div>
 
       <div className="whisper-area">
@@ -163,36 +180,51 @@ function Whisper() {
         </span>
       ))}
 
-      {landedChars.map(c => (
-        <span
-          key={c.id}
-          className="whisper-landed-char"
-          style={{
-            left: c.endX,
-            top: c.endY,
-            transform: `rotate(${c.rotation}deg)`,
-            color: charColor,
-            animationDelay: `${c.landDelay ?? 0}s`,
-          }}
-        >
-          {c.char}
-        </span>
-      ))}
+      {landedChars.map(c => {
+        const fp = floatParams(c.id);
+        return (
+          <span
+            key={c.id}
+            className="whisper-landed-char"
+            style={{
+              left: c.endX,
+              top: c.endY,
+              '--rot': `${c.rotation}deg`,
+              '--fx': `${fp.fx}px`,
+              '--fy': `${fp.fy}px`,
+              transform: `rotate(${c.rotation}deg)`,
+              color: charColor,
+              animationDuration: `0.4s, ${fp.dur}s`,
+              animationDelay: `${c.landDelay ?? 0}s, ${fp.delay}s`,
+            }}
+          >
+            {c.char}
+          </span>
+        );
+      })}
 
-      {DEFAULT_LANDED.map(c => (
-        <span
-          key={c.id}
-          className="whisper-landed-char"
-          style={{
-            left: c.left,
-            top: c.top,
-            transform: `rotate(${c.rotation}deg)`,
-            color: charColor,
-          }}
-        >
-          {c.char}
-        </span>
-      ))}
+      {DEFAULT_LANDED.map(c => {
+        const fp = floatParams(c.id);
+        return (
+          <span
+            key={c.id}
+            className="whisper-landed-char"
+            style={{
+              left: c.left,
+              top: c.top,
+              '--rot': `${c.rotation}deg`,
+              '--fx': `${fp.fx}px`,
+              '--fy': `${fp.fy}px`,
+              transform: `rotate(${c.rotation}deg)`,
+              color: charColor,
+              animationDuration: `0.4s, ${fp.dur}s`,
+              animationDelay: `0s, ${fp.delay}s`,
+            }}
+          >
+            {c.char}
+          </span>
+        );
+      })}
 
       <div className="mode-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
         <img src={isDarkMode ? sunSvg : moonSvg} width="30" height="30" alt="" style={{ display: 'block' }} />

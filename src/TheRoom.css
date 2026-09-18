@@ -19,27 +19,33 @@
   position: fixed;
   top: 15px;
   left: 24px;
-  right: 60px;
+  /* Right inset must clear the online counter, which is pinned to the viewport
+     edge (right: 24px) and therefore slides left as the window narrows. At
+     right:60px the description ran into it below ~800px wide. The counter is
+     ~120px at 27px type, so 170px keeps the header's right edge permanently to
+     the left of the counter's left edge at every width. */
+  right: 170px;
   display: flex;
   align-items: baseline;
-  gap: 32px;
+  gap: 18px;
   z-index: 50;
   pointer-events: none;
 }
 
 .room-title {
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 22px;
-  color: #000;
+  font-size: 27px;
+  color: #3E3E40;
   white-space: nowrap;
 }
 
 .room-description {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: 20px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
   line-height: 1.3;
 }
 
@@ -56,19 +62,21 @@
 }
 
 .online-star {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  font-size: 20px;
-  color: inherit;
+  font-size: 27px;
+  color: #3E3E40;
   line-height: 1;
   flex-shrink: 0;
 }
 
 .online-label {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  font-size: 20px;
-  color: #000;
+  font-size: 27px;
+  color: #3E3E40;
 }
 
 /* Canvas area — full page */
@@ -95,29 +103,88 @@
   cursor: grab;
   gap: 2px;
   touch-action: none;
+  /* The card eases into its snapped resting place on release. Suppressed while
+     dragging (.dragging) so it tracks the pointer 1:1 instead of lagging. */
+  transition: left 0.13s ease-out, top 0.13s ease-out;
+}
+
+.window-wrapper.dragging {
+  transition: none;
+  cursor: grabbing;
 }
 
 .window-wrapper:active {
   cursor: grabbing;
 }
 
+/* The name sits OUTSIDE .user-window, on the shared canvas, so with no fill of
+   its own any dashed card border behind it ran straight through the letters —
+   worst on mobile, where the cards overlap far more.
+   The knockout is a text-shadow halo, NOT a background rectangle. A solid chip
+   was tried first and failed for a specific reason: the ground under the name
+   is not one flat colour. .user-window carries a glow, so the canvas around a
+   card is a gradient, and a flat fill can only match it in one place — the rest
+   showed up as a visible rectangle, obvious in dark mode where the glow is a
+   pale halo. Stacking the page colour as blurred shadows instead confines the
+   knockout to the glyph edges, where a few px of mismatch is invisible.
+   Repeated offsets are how you build up opacity; one shadow is too faint. */
 .window-username {
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
   font-size: 16px;
-  color: #000;
+  color: #3E3E40;
+  text-shadow:
+    0 0 2px #F3F3F3,
+    0 0 2px #F3F3F3,
+    0 0 3px #F3F3F3,
+    0 0 3px #F3F3F3,
+    0 0 4px #F3F3F3;
   white-space: nowrap;
   height: 22px;
   line-height: 22px;
   flex-shrink: 0;
 }
 
-.username-center {
-  align-self: center;
+/* The strip above each card: name and time together, centred as one unit over
+   the card. Pinning the time to the strip's right end was tried and rejected —
+   the strip is as wide as the card, so on a 450px ellipse the time ended up
+   200px from the name, floating over empty canvas or inside whichever card sat
+   behind it. Keeping the pair adjacent makes it read as one label and behaves
+   the same at every card width. */
+.window-namebar {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.username-right {
-  align-self: flex-end;
+/* Same face as the name beside it. Mixing them was tried and failed: at a
+   matched 16px the serif's digits ran 11% taller than the sans lowercase and
+   2.3x narrower per character, so the pair read as two different optical sizes
+   and looked misaligned even though the baselines were correct. Whichever face
+   the strip uses, both halves must use it.
+   Carries the name's halo knockout for the same reason the name has one: it
+   sits on the shared canvas, so dashed card borders behind it would otherwise
+   run straight through it. */
+.window-time {
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
+  font-weight: 300;
+  font-size: 16px;
+  color: #3E3E40;
+  height: 22px;
+  line-height: 22px;
+  text-shadow:
+    0 0 2px #F3F3F3,
+    0 0 2px #F3F3F3,
+    0 0 3px #F3F3F3,
+    0 0 3px #F3F3F3,
+    0 0 4px #F3F3F3;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 /* The actual window shape */
@@ -133,7 +200,7 @@
 .rect-window {
   border-radius: 2px;
   position: relative;
-  --dash-color: #000;
+  --dash-color: #3E3E40;
 }
 
 .circle-window {
@@ -177,7 +244,7 @@
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
   font-size: 16px;
-  color: #000;
+  color: #3E3E40;
   margin: 0;
   line-height: 1.5;
   white-space: pre-line;
@@ -200,7 +267,7 @@
 .card-x {
   font-size: 18px;
   font-weight: 200; /* thin stroke */
-  color: #000;
+  color: #3E3E40;
 }
 
 .card-edit {
@@ -221,17 +288,44 @@
 .light-work-page.dark-mode .card-x { color: #F3F3F3; }
 .light-work-page.dark-mode .card-edit { color: rgba(243, 243, 243, 0.5); }
 
+/* Puts every card back on the composed layout. Bottom-center so it never
+   collides with "back" (left) or "+ share" (right); only rendered once
+   something has been moved. Quieter than the other two — it's an undo, not an
+   invitation — but it is still a button, so it takes the same size as "back"
+   and "share"; only its colour is quieter. */
+.tidy-btn {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
+  font-weight: 300;
+  font-size: 22px;
+  color: rgba(62, 62, 64, 0.45);
+  cursor: pointer;
+  padding: 0;
+  z-index: 50;
+}
+
+.tidy-btn:hover {
+  color: #3E3E40;
+}
+
 /* Create window button */
 .create-window-btn {
   position: fixed;
-  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   right: calc(30px + env(safe-area-inset-right, 0px));
   background: none;
   border: none;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 18px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
   cursor: pointer;
   padding: 0;
   z-index: 50;
@@ -241,35 +335,86 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  /* Light tint + real blur so the page behind smudges out (not just a dim) */
-  background: rgba(0, 0, 0, 0.1);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  /* Blur removed — the room stays legible behind the panel, so the tint is now
+     only a slight step back, not a cover. 0.45 was calibrated to finish off a
+     14px blur; with no blur it read as a flat grey film over the photos.
+     The grain is an inline SVG background-image (so it paints behind the panel,
+     not over it). It lives on the overlay because it used to have to sit on top
+     of the frosted glass. */
+  background-color: rgba(130, 130, 130, 0.2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
   z-index: 100;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* The panel is pinned to the right edge and runs the full height, so the
+     overlay stretches it rather than centring a box. */
+  align-items: stretch;
+  justify-content: flex-end;
 }
 
-/* House-shaped card — memo.svg (light) / memo2.svg (dark) as the background,
-   each with its own colours (set inline based on dark mode). */
+/* Create / edit panel.
+   Desktop: a full-height column pinned to the right edge of the window. Its
+   ONLY outline is the left edge — the line that divides it from the blurred
+   room behind it. A full box outline would read as a floating dialog, which
+   this is not. On mobile the panel IS the whole screen, so there is nothing to
+   divide and it carries no border at all.
+   Padding is the page's own inset (15/24/20 desktop, 14/12 mobile), so the
+   panel's text lines up with the header and the bottom buttons. */
 .create-modal {
   position: relative;
-  width: 528px;
-  /* ink for the HTML text/shape outlines that overlay the house */
-  --memo-stroke: #000;
-  --memo-ink: #000;
-  --memo-ink-soft: #aaa;
+  /* Fixed rather than vw: the site's responsive policy is one desktop/mobile
+     breakpoint, not continuous rescaling. 480 = a 432px square photo frame
+     plus the panel's two 24px insets — the width follows the frame, not the
+     other way round. */
+  width: 480px;
+  height: 100%;
+  flex-shrink: 0;
+  /* Only ever engages on a very short window; it keeps the frame square there
+     instead of squashing it. */
+  overflow-y: auto;
+  background-color: #F3F3F3;
+  /* The dividing line, matched to Home's house.svg: its lines are
+     stroke-width 1 in a 1667-wide viewBox rendered into a 1400px container, so
+     they land at 1 x 1400/1667 = 0.84px on screen.
+     Drawn as a gradient, NOT border-left, because Chrome snaps border-width to
+     whole device pixels — 0.84px silently became 0.5px (1 device px at DPR 2),
+     which is exactly the too-thin line this was meant to fix. A gradient stop
+     is painted with sub-pixel anti-aliasing, like the SVG stroke it matches.
+     Background-attachment defaults to scroll, so it stays put if the panel
+     ever scrolls. */
+  background-image: linear-gradient(to right, var(--memo-stroke) 0.84px, transparent 0.84px);
+  background-repeat: no-repeat;
+  padding: 15px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  /* Top-aligned: the empty space belongs at the bottom, as drawn. */
+  justify-content: flex-start;
+
+  /* One note line's height. It drives both the textarea's line-height and the
+     rules drawn behind it, so those two cannot drift apart. 2.25x the 16px
+     text — 50px was sized for 22px type and read loose at this size. */
+  --note-line: 36px;
+  /* How far the ruled lines are pulled in from the panel's inset. The text is
+     indented twice this, so it keeps sitting one inset inside each rule. */
+  --rule-inset: 10px;
+  /* ink for the text and the dashed outlines */
+  --memo-stroke: #3E3E40;
+  --memo-ink: #3E3E40;
+  --memo-ink-soft: rgba(62, 62, 64, 0.5);
 }
 
-/* The house image defines the modal's height (from the SVG viewBox aspect) */
-.memo-house {
-  display: block;
-  width: 100%;
-  height: auto;
+/* The tint has to darken its own ground, so it can't be one colour for both
+   themes: mid-grey (130) over #F3F3F3 steps the room down, but over #3D3D3F
+   (61) it steps it UP — the room came out lighter than the panel, which made
+   the panel read as a hole rather than as the layer in front. Mirrored around
+   the ground: 61 -> ~50, the same proportional step down that 0.2 grey gives
+   in light mode, and enough to stay clearly darker than the panel. */
+.light-work-page.dark-mode .modal-overlay {
+  background-color: rgba(26, 26, 27, 0.3);
 }
 
 .light-work-page.dark-mode .create-modal {
+  background-color: #3D3D3F;
   --memo-stroke: #F3F3F3;
   --memo-ink: #F3F3F3;
   --memo-ink-soft: rgba(243, 243, 243, 0.5);
@@ -280,62 +425,86 @@
   stroke: var(--memo-stroke);
 }
 
-/* "share something, <nick>" runs along the right roof line (~22°) */
-.modal-title {
-  position: absolute;
-  top: 27%;
-  right: 12%;
-  margin: 0;
-  transform-origin: right center;
-  transform: rotate(22deg);
-  font-family: 'SeasonSans', -apple-system, sans-serif;
-  font-weight: 300;
-  font-size: 15px;
-  color: var(--memo-ink);
-  white-space: nowrap;
-}
-
-/* Everything else lives inside the house body (inner box of memo.svg) */
-.modal-body {
-  position: absolute;
-  left: 13%;
-  right: 13%;
-  top: 33%;
-  bottom: 6.5%;
-  display: flex;
-  flex-direction: column;
-}
-
-.shape-picker {
+/* Shape selector only. close/save moved to the bottom row so the panel's
+   actions sit where every other screen keeps them. */
+.modal-top {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 16px;
+  justify-content: flex-end;
+  flex-shrink: 0;
 }
 
-.shape-label {
-  font-family: 'SeasonSans', -apple-system, sans-serif;
-  font-weight: 300;
-  font-size: 13px;
-  color: var(--memo-ink);
-  white-space: nowrap;
-  margin-right: 6px;
-}
-
-.shape-btn {
+/* Button tier — the same face and size as "back", "share" and "tidy up". */
+.modal-close,
+.modal-submit {
   background: none;
   border: none;
-  padding: 4px;
+  padding: 0;
+  cursor: pointer;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
+  font-weight: 300;
+  font-size: 22px;
+  color: var(--memo-ink);
+}
+
+/* Negative margin cancels the padding so the glyph still sits flush with the
+   panel's right inset while keeping a comfortable tap target. */
+.shape-toggle {
+  background: none;
+  border: none;
+  padding: 6px;
+  margin: -6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* Photo frame — a true square (so the round option is a true circle), sized
+   by the panel's inner width. Height comes from aspect-ratio rather than a
+   percentage of the panel, which is what made it a slightly-off oval before. */
+.image-upload-area {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* consumed by DashedRect / DashedEllipse */
+  --dash-color: var(--memo-stroke);
+}
+
+/* Sized to .window-text — the sans on the memo cards — because what you type
+   here IS that text once the card is on the board. The description tier (22px)
+   read far too large inside the panel. */
+.upload-label {
+  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--memo-ink-soft);
+}
+
+.draft-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Round card selected: the preview is clipped to the frame it will live in. */
+.create-modal.is-circle .draft-image-preview {
+  border-radius: 50%;
+}
+
+/* Three ruled note lines; "save" sits at the right end of the first one. */
 .draft-text-wrap {
   position: relative;
-  height: 28px;
+  height: calc(var(--note-line) * 3);
   flex-shrink: 0;
+  margin-top: 60px;
 }
 
 .draft-text {
@@ -345,14 +514,15 @@
   height: 100%;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: 13px;
+  font-size: 16px;
   color: var(--memo-ink);
   border: none;
   outline: none;
   resize: none;
   background: transparent;
-  padding: 0;
-  line-height: 28px;
+  /* Text starts just inside the rule rather than flush with its end cap. */
+  padding: 0 0 0 calc(var(--rule-inset) * 2);
+  line-height: var(--note-line);
   box-sizing: border-box;
   overflow: hidden;
   z-index: 1;
@@ -372,74 +542,46 @@
 }
 
 .note-line-row {
-  flex: 1;
+  height: var(--note-line);
   display: flex;
   align-items: flex-end;
 }
 
+/* Solid, unlike the cards' dashed outlines: these are ruled writing lines,
+   not a cut edge. */
 .modal-divider {
   border: none;
-  border-top: 0.5px dashed var(--memo-stroke);
-  margin: 0;
-  width: 100%;
-}
-
-.image-upload-area {
+  border-top: 0.5px solid var(--memo-stroke);
+  margin: 0 var(--rule-inset);
+  width: auto;
   flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
-  font-size: 13px;
-  color: var(--memo-ink-soft);
-  position: relative;
 }
 
-.draft-image-preview {
-  max-width: 100%;
-  max-height: 76px;
-  object-fit: cover;
-}
-
+/* Bottom action row. margin-top:auto pushes it to the panel's floor, so with
+   the panel's bottom padding set to the page's own inset, close/save land on
+   exactly the same baseline as "back" / "share" / "tidy up" behind them — and
+   on mobile, where the panel IS the screen, the buttons don't move at all
+   between the room and this panel. */
 .modal-actions {
+  margin-top: auto;
   display: flex;
-  justify-content: flex-end;
-  gap: 14px;
+  align-items: baseline;
+  justify-content: space-between;
   flex-shrink: 0;
-}
-
-.modal-cancel,
-.modal-submit {
-  background: none;
-  border: none;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
-  font-weight: 300;
-  font-size: 13px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.modal-cancel {
-  color: var(--memo-ink-soft);
-}
-
-.modal-submit {
-  color: var(--memo-ink);
 }
 
 /* Home button */
 .home-btn {
   position: fixed;
-  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   left: 24px;
   z-index: 50;
   cursor: pointer;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 18px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
 }
 
 .light-work-page.dark-mode .home-btn {
@@ -459,10 +601,10 @@
 .mode-toggle svg {
   display: block;
   transition: filter 0.3s ease;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 0 3px rgba(62, 62, 64, 0.15));
 }
 
-.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .sun { stroke: #3E3E40; }
 .mode-toggle svg .moon { display: none; }
 
 .mode-toggle svg.dark {
@@ -508,9 +650,33 @@
 
 .light-work-page.dark-mode .window-username {
   color: #F3F3F3;
+  text-shadow:
+    0 0 2px #3D3D3F,
+    0 0 2px #3D3D3F,
+    0 0 3px #3D3D3F,
+    0 0 3px #3D3D3F,
+    0 0 4px #3D3D3F;
+}
+
+.light-work-page.dark-mode .window-time {
+  color: #F3F3F3;
+  text-shadow:
+    0 0 2px #3D3D3F,
+    0 0 2px #3D3D3F,
+    0 0 3px #3D3D3F,
+    0 0 3px #3D3D3F,
+    0 0 4px #3D3D3F;
 }
 
 .light-work-page.dark-mode .window-text {
+  color: #F3F3F3;
+}
+
+.light-work-page.dark-mode .tidy-btn {
+  color: rgba(243, 243, 243, 0.45);
+}
+
+.light-work-page.dark-mode .tidy-btn:hover {
   color: #F3F3F3;
 }
 
@@ -519,75 +685,56 @@
   color: #F3F3F3;
 }
 
-@media (max-width: 768px) {
-  .room-header {
-    gap: 16px;
-    right: 50px;
-    padding-right: 0;
-  }
-
-  .room-title {
-    font-size: 18px;
-  }
-
-  .room-description {
-    font-size: 18px;
-  }
-
-  .room-online {
-    right: 16px;
-  }
-
-  .create-window-btn {
-    font-size: 14px;
-    bottom: 20px;
-    right: 20px;
-  }
-
-  .home-btn {
-    font-size: 14px;
-    bottom: 20px;
-    left: 16px;
-  }
-
-  .create-modal {
-    width: calc(100vw - 32px);
-  }
-}
-
 @media (max-width: 480px) {
   .room-header {
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 10px;
+    row-gap: 4px;
     top: calc(14px + env(safe-area-inset-top, 0px));
-    left: 16px;
-    right: 44px;
+    left: 12px;
+    right: 12px;
   }
 
   .online-label {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   .online-star {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   .room-title {
-    font-size: 20px;
+    font-size: clamp(22px, 6.154vw, 26px);
   }
+  /* Measure is capped well short of the right gutter — at full width the room
+     copy's longest line ended 8px off the edge and the three pages were
+     inconsistent (8 / 14 / 33px). At 300px all three sit 76-92px clear and
+     none of them gains a line.
+     The max() floor is not cosmetic: Whisper breaks to three lines at 270px
+     and strands "here." alone on the last one, so on a 360px-wide phone the
+     plain calc() would cross that threshold. 280px is the last width that
+     still holds it to two lines. */
 
   .room-description {
-    font-size: 15px;
+
+    max-width: max(280px, calc(100vw - 90px));
+
+    line-height: 1.15;
+    font-size: clamp(15px, 4.103vw, 17px);
   }
 
   .room-online {
+
+    gap: 4px;
     top: calc(14px + env(safe-area-inset-top, 0px));
-    right: 16px;
+    right: 12px;
   }
 
   .mode-toggle {
     top: calc(14px + env(safe-area-inset-top, 0px));
-    right: calc(14px + env(safe-area-inset-right, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
     transform: none;
   }
 
@@ -598,30 +745,60 @@
   }
 
   .create-window-btn {
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    right: calc(20px + env(safe-area-inset-right, 0px));
-    font-size: 16px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    font-size: clamp(19px, 5.128vw, 22px);
   }
 
   .home-btn {
-    font-size: 16px;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    left: calc(14px + env(safe-area-inset-left, 0px));
+    font-size: clamp(19px, 5.128vw, 22px);
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    left: calc(12px + env(safe-area-inset-left, 0px));
   }
 
+  .tidy-btn {
+    font-size: clamp(19px, 5.128vw, 22px);
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Full-screen on a phone: no floating card, and no dividing line because
+     there is nothing left of it to divide from. */
   .create-modal {
-    /* House keeps its aspect-ratio from the base rule; just fit the width and
-       scale the whole thing down (~10% bigger than before). */
-    width: calc(100vw - 24px);
-    transform: scale(0.79);
-    transform-origin: center;
+    width: 100%;
+    /* Full-screen: nothing to the left of it, so no dividing line. */
+    background-image: none;
+    padding:
+      calc(14px + env(safe-area-inset-top, 0px))
+      calc(12px + env(safe-area-inset-right, 0px))
+      calc(14px + env(safe-area-inset-bottom, 0px))
+      calc(12px + env(safe-area-inset-left, 0px));
+    --note-line: 30px;
+    --rule-inset: 8px;
   }
 
-  /* iOS Safari auto-zooms into any focused input with font-size < 16px and
-     never zooms back out (page ends up stuck / white). Keep the CSS size at
-     16px to suppress that; the modal's scale(0.79) makes it look ~12.6px. */
+  .modal-close,
+  .modal-submit {
+    font-size: clamp(19px, 5.128vw, 22px);
+  }
+
+  .upload-label {
+    font-size: clamp(14px, 3.846vw, 16px);
+  }
+
+  /* iOS Safari auto-zooms into any focused input under 16px and never zooms
+     back out (the page ends up stuck), so the 16px floor is functional, not
+     typographic: it is the memo-card sans tier clamped from below, which makes
+     this 1px larger than the card text at 390px. */
   .draft-text {
-    font-size: 17px;
+    font-size: max(16px, clamp(14px, 3.846vw, 16px));
+  }
+
+  .image-upload-area {
+    margin-top: 12px;
+  }
+
+  .draft-text-wrap {
+    margin-top: 34px;
   }
 
   /* Memo-card outlines: a touch thinner + denser dashes on mobile */
@@ -630,55 +807,79 @@
     stroke-width: 0.6;
     stroke-dasharray: 3 2;
   }
-}
 
-@media (max-height: 600px) {
-  .room-header {
-    top: 12px;
-  }
-
+  /* Was pinned top-right under the mode toggle, which read as a stray third
+     corner. It now rides in the header next to the title; the description is
+     forced onto its own line so the pair sits on one row. Desktop is
+     untouched — there the element stays position:fixed, so moving it inside
+     the header in the DOM changes nothing about where it paints. */
   .room-online {
-    top: 50px;
+    position: static;
+    top: auto;
+    right: auto;
   }
 
-  .create-window-btn {
-    bottom: 12px;
+  .room-description {
+    width: 100%;
   }
 }
 
 /* ── Mobile canvas layout (≤480px) ──────────────────────── */
-.room-mobile-scroll {
-  display: none;
-}
-
 @media (max-width: 480px) {
   .light-work-page {
     overflow: hidden;
   }
 
-  /* Same free-drag canvas as desktop, but 1:1 — cards are pre-sized for the
-     phone via MOBILE_GEO, so no scaling is applied. */
+  /* The card area scrolls on its own; the header and the bottom buttons are
+     position:fixed and stay put. Inset to sit between them: 119px clears the
+     three-line description (measured 95-107px across phone widths, +12), and
+     44px clears back / tidy up / + share. Before this the whole stack had to
+     fit one screen, which forced the cards to overlap hard.
+     overscroll-behavior stops a flick at either end from scrolling the page
+     behind it. */
+  .room-canvas {
+    top: 119px;
+    bottom: 44px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Height comes from JS (mobileStackHeight) because absolutely positioned
+     cards give their parent no height to scroll. width stays 100% so cards are
+     placed in phone pixels, not the desktop canvas' 1650px space. */
   .room-canvas-inner {
     width: 100%;
-    height: 100%;
     transform: none !important;
   }
 
   /* Online count sits below the mode toggle on a phone */
   .room-online {
     display: flex;
-    top: calc(46px + env(safe-area-inset-top, 0px));
-    right: 14px;
+    position: static;
+    top: auto;
+    right: auto;
   }
 
   .window-username {
-    font-size: 14px;
+    font-size: clamp(14px, 3.846vw, 16px);
     height: 17px;
     line-height: 17px;
   }
 
+  .window-time {
+    font-size: clamp(14px, 3.846vw, 16px);
+    height: 17px;
+    line-height: 17px;
+  }
+
+  .window-namebar {
+    gap: 6px;
+  }
+
   .window-text {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
     line-height: 1.4;
   }
 
@@ -692,8 +893,8 @@
     inset: 30px 16px;
   }
 
-  .card-x { font-size: 17px; }
-  .card-edit { font-size: 14px; }
+  .card-x { font-size: clamp(14px, 3.846vw, 16px); }
+  .card-edit { font-size: clamp(14px, 3.846vw, 16px); }
 
   .rect-x { top: 7px; right: 9px; }
   .rect-edit { bottom: 7px; right: 10px; }

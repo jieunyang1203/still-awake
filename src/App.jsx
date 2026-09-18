@@ -9,6 +9,12 @@ function App() {
   const p5Ref = useRef(null);
   const navigate = useNavigate();
 
+  // Landing color/background animations start at mount; the nickname input
+  // mounts later (on click), so we offset its tint animation by however far
+  // the cycle has progressed to keep it in phase. Computed once, then cached.
+  const animStartRef = useRef(performance.now());
+  const nickDelayRef = useRef(null);
+
   const [timeUntilOpen, setTimeUntilOpen] = useState('');
   const [showNicknameInput, setShowNicknameInput] = useState(false);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 480);
@@ -78,11 +84,11 @@ function App() {
         p.push();
         p.translate(p.width / 2, p.height / 2);
 
-        p.fill('rgba(255,255,255,0.65)');
+        p.fill('rgba(243,243,243,0.55)');
         // 0.55 keeps the hairline feel but stays above the subpixel threshold
         // where antialiasing makes the rim look dashed
         p.strokeWeight(0.55);
-        p.stroke('rgba(0,0,0,0.8)');
+        p.stroke('#3E3E40');
         p.ellipse(0, 0, p.width * 0.997, p.height * 0.997);
 
         const numbers = [
@@ -106,7 +112,7 @@ function App() {
           p.text(num, x, y);
           p.noErase();
           p.noFill();
-          p.stroke('rgba(0,0,0,0.8)');
+          p.stroke('#3E3E40');
           p.strokeWeight(0.4);
           p.text(num, x, y);
         });
@@ -135,10 +141,16 @@ function App() {
 
         const needleLength = canvasSize * 0.25;
         const counterbalanceLength = canvasSize * 0.032;
-        const needleBase = canvasSize * 0.0021;
-        const needleTip = canvasSize * 0.00094;
+        // Floors only kick in on the small mobile clock, and only by a hair.
+        // At ~343px the proportional widths are 0.51 / 0.22: the base is fine
+        // (2 device px at dpr 2) but the tip lands under one device pixel and
+        // washes out, taking the taper with it. These floors lift just the tip
+        // over that threshold — the needle keeps its original weight. Desktop
+        // is untouched (928px resolves to 1.392 / 0.603, both above the floor).
+        const needleBase = Math.max(canvasSize * 0.0015, 0.55);
+        const needleTip = Math.max(canvasSize * 0.00065, 0.30);
 
-        p.fill('#000000');
+        p.fill('#3E3E40');
         p.noStroke();
         p.beginShape();
         p.vertex(-needleBase, 0);
@@ -149,9 +161,9 @@ function App() {
         p.vertex(-needleTip, -needleLength);
         p.endShape(p.CLOSE);
 
-        p.fill('#000000');
+        p.fill('#3E3E40');
         p.noStroke();
-        p.ellipse(0, 0, canvasSize * 0.031, canvasSize * 0.031);
+        p.ellipse(0, 0, canvasSize * 0.027, canvasSize * 0.027);
 
         p.pop();
       };
@@ -240,14 +252,14 @@ function App() {
 
       {/* Base layer */}
       <div className="landing-bottom-left text-base-layer">
-        <span className="nav-workspace" onClick={handleNavigateHome}>To workspace</span>
+        <span className="nav-workspace" onClick={handleNavigateHome}>To Lobby</span>
         {showNicknameInput && !isMobile && (
           <span className="tonight-label">↘ tonight, you are:</span>
         )}
       </div>
 
       <span className="nav-time landing-bottom-right text-base-layer">
-        {timeUntilOpen === 'Open now' ? 'Open now' : <><span className="time-prefix">Hours until opening: </span>{timeUntilOpen}</>}
+        {timeUntilOpen === 'Open now' ? 'Open now' : <><span className="time-prefix">Hours until opening: </span>[{timeUntilOpen}]</>}
       </span>
 
       <p className="description landing-description text-white-layer" aria-hidden="true">
@@ -255,13 +267,13 @@ function App() {
       </p>
       {/* White text layer — opacity only, compositor-safe */}
       <div className="landing-bottom-left text-white-layer" aria-hidden="true">
-        <span className="nav-workspace">To workspace</span>
+        <span className="nav-workspace">To Lobby</span>
         {showNicknameInput && !isMobile && (
           <span className="tonight-label">↘ tonight, you are:</span>
         )}
       </div>
       <span className="nav-time landing-bottom-right text-white-layer" aria-hidden="true">
-        {timeUntilOpen === 'Open now' ? 'Open now' : <><span className="time-prefix">Hours until opening: </span>{timeUntilOpen}</>}
+        {timeUntilOpen === 'Open now' ? 'Open now' : <><span className="time-prefix">Hours until opening: </span>[{timeUntilOpen}]</>}
       </span>
 
       {/* Nickname layer (desktop) — only the input is visible here; the label
@@ -270,14 +282,15 @@ function App() {
           centered modal below instead. */}
       {showNicknameInput && !isMobile && (
         <div className="landing-bottom-left nickname-layer">
-          <span className="nav-workspace" style={{ visibility: 'hidden' }} aria-hidden="true">To workspace</span>
+          <span className="nav-workspace" style={{ visibility: 'hidden' }} aria-hidden="true">To Lobby</span>
           <div className="nickname-box">
             <span className="tonight-label" style={{ visibility: 'hidden' }} aria-hidden="true">↘ tonight, you are:</span>
             <div className="nickname-sizer" data-value="a name for tonight." ref={sizerRef}>
               <input
                 className="nickname-input"
+                style={{ animationDelay: (nickDelayRef.current ??= `-${(((performance.now() - animStartRef.current) / 1000) % 33).toFixed(2)}s`) }}
                 placeholder="a name for tonight."
-                maxLength={6}
+                /* No maxLength attribute on purpose — see the mobile input. */
                 onCompositionStart={() => { composingRef.current = true; }}
                 onCompositionEnd={(e) => {
                   composingRef.current = false;
@@ -306,7 +319,14 @@ function App() {
             <input
               className="nickname-modal-input"
               placeholder="a name for tonight."
-              maxLength={6}
+              /* The 6-character limit is enforced in JS below, NOT by the
+                 maxLength attribute. The attribute is applied by the browser
+                 per inserted character, and a Hangul syllable is assembled from
+                 two or three of them — so at the boundary it could cut a
+                 syllable mid-composition and leave a stray jamo, or refuse the
+                 6th character outright. The onInput/onCompositionEnd pair below
+                 waits for the syllable to finish before trimming, which is why
+                 it has to be the only limiter. */
               onCompositionStart={() => { composingRef.current = true; }}
               onCompositionEnd={(e) => {
                 composingRef.current = false;

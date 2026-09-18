@@ -3,3 +3,7 @@ dist
 .vite
 *.local
 .DS_Store
+
+# Licensed fonts the site no longer uses. Kept locally as an archive; not
+# committed, because this repo is public.
+unused-assets/

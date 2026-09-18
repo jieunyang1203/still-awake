@@ -1,16 +1,22 @@
 /* Archive.css */
 
+/* In flow, directly after .archive-header, rather than absolutely positioned.
+   It used to be position:absolute at top:70px, with a max-width:768px rule
+   putting it back into flow for smaller screens — so when that intermediate
+   breakpoint was removed the absolute placement reached mobile and the field
+   landed on top of the description. top:70px was also only ever right while
+   the description stayed on one line: at narrow desktop widths the header
+   grows past it and the two collide. Flow has neither problem. */
 .whisper-area {
-  position: absolute;
-  top: 70px;
-  left: 24px;
+  position: relative;
+  margin: 12px 0 0 24px;
   z-index: 10;
 }
 
 .whisper-input-wrap {
   position: relative;
   display: inline-block;
-  --dash-color: #000;
+  --dash-color: #3E3E40;
 }
 
 .whisper-input {
@@ -23,7 +29,7 @@
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
   font-size: 16px;
-  color: #000;
+  color: #3E3E40;
   user-select: text;
   -webkit-user-select: text;
 }
@@ -40,7 +46,7 @@
   position: fixed;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 22px;
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -56,17 +62,28 @@
   to   { opacity: 0.3; }
 }
 
+/* Drift for settled letters — keeps each char's rotation (via --rot) and glides
+   smoothly out to a peak offset (--fx/--fy) and back, one clean direction. The
+   offset, duration and phase are randomized per character (set inline), so each
+   letter drifts its own way, but the path itself stays smooth (no zig-zag). */
+@keyframes whisper-float {
+  0%   { transform: rotate(var(--rot, 0deg)) translate(0px, 0px); }
+  50%  { transform: rotate(var(--rot, 0deg)) translate(var(--fx, 0px), var(--fy, 0px)); }
+  100% { transform: rotate(var(--rot, 0deg)) translate(0px, 0px); }
+}
+
 .whisper-landed-char {
   position: fixed;
   font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 22px;
   opacity: 0;
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
   z-index: 1;
-  animation: whisper-land-in 0.4s ease-out forwards;
+  animation: whisper-land-in 0.4s ease-out forwards,
+             whisper-float 6s ease-in-out infinite;
 }
 
 .archive-page.dark-mode .whisper-input-wrap {
@@ -90,25 +107,31 @@
 .archive-header {
   display: flex;
   align-items: baseline;
-  gap: 32px;
-  padding: 15px 24px 0 24px;
+  gap: 18px;
+  /* Right inset must clear the online counter, which is pinned to the viewport
+     edge (right: 24px) and therefore slides left as the window narrows. At
+     right:60px the description ran into it below ~800px wide. The counter is
+     ~120px at 27px type, so 170px keeps the header's right edge permanently to
+     the left of the counter's left edge at every width. */
+  padding: 15px 170px 0 24px;
   position: relative;
   z-index: 10;
 }
 
 .archive-title {
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 22px;
-  color: #000;
+  font-size: 27px;
+  color: #3E3E40;
   white-space: nowrap;
 }
 
 .archive-description {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: 20px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
   line-height: 1.3;
 }
 
@@ -125,19 +148,21 @@
 }
 
 .online-star {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  font-size: 20px;
-  color: inherit;
+  font-size: 27px;
+  color: #3E3E40;
   line-height: 1;
   flex-shrink: 0;
 }
 
 .online-label {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  font-size: 20px;
-  color: #000;
+  font-size: 27px;
+  color: #3E3E40;
 }
 
 .archive-page.dark-mode .online-star,
@@ -148,14 +173,15 @@
 /* Home button */
 .home-btn {
   position: fixed;
-  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   left: 24px;
   z-index: 50;
   cursor: pointer;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 18px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
 }
 
 .archive-page.dark-mode .home-btn {
@@ -175,10 +201,10 @@
 .mode-toggle svg {
   display: block;
   transition: filter 0.3s ease;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 0 3px rgba(62, 62, 64, 0.15));
 }
 
-.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .sun { stroke: #3E3E40; }
 .mode-toggle svg .moon { display: none; }
 
 .mode-toggle svg.dark {
@@ -204,11 +230,11 @@
 .archive-title,
 .archive-description {
   text-shadow:
-    0 0 6px rgba(255, 255, 255, 1),
-    0 0 15px rgba(255, 255, 255, 1),
-    0 0 30px rgba(255, 255, 255, 0.95),
-    0 0 60px rgba(255, 255, 255, 0.8),
-    0 0 100px rgba(255, 255, 255, 0.5);
+    0 0 6px rgba(243, 243, 243, 1),
+    0 0 15px rgba(243, 243, 243, 1),
+    0 0 30px rgba(243, 243, 243, 0.95),
+    0 0 60px rgba(243, 243, 243, 0.8),
+    0 0 100px rgba(243, 243, 243, 0.5);
 }
 
 .archive-page.dark-mode .archive-title,
@@ -219,66 +245,49 @@
     0 0 35px rgba(160, 160, 165, 0.2);
 }
 
-@media (max-width: 768px) {
-  .archive-header {
-    gap: 16px;
-    padding: 14px 16px 0 16px;
-  }
-
-  .archive-title {
-    font-size: 18px;
-  }
-
-  .archive-description {
-    font-size: 16px;
-  }
-
-  .whisper-area {
-    position: relative;
-    top: auto;
-    left: auto;
-    margin: 12px 0 0 16px;
-  }
-
-  .whisper-input-wrap,
-  .whisper-input {
-    width: min(380px, calc(100vw - 32px));
-  }
-
-  .archive-online {
-    right: 16px;
-  }
-
-  .home-btn {
-    font-size: 14px;
-    bottom: 20px;
-    left: 16px;
-  }
-}
-
 @media (max-width: 480px) {
+  /* Was inheriting 18px from the 768px rule, leaving Whisper the only page
+     without a real mobile title. Matches .room-title / .scribble-title. */
+  .archive-title {
+    font-size: clamp(22px, 6.154vw, 26px);
+  }
+
   .archive-header {
-    flex-direction: column;
-    gap: 6px;
-    padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 0 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 10px;
+    row-gap: 6px;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 0 12px;
   }
 
   .online-label {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   .online-star {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
+  /* Measure is capped well short of the right gutter — at full width the room
+     copy's longest line ended 8px off the edge and the three pages were
+     inconsistent (8 / 14 / 33px). At 300px all three sit 76-92px clear and
+     none of them gains a line.
+     The max() floor is not cosmetic: Whisper breaks to three lines at 270px
+     and strands "here." alone on the last one, so on a 360px-wide phone the
+     plain calc() would cross that threshold. 280px is the last width that
+     still holds it to two lines. */
 
   .archive-description {
-    font-size: 15px;
-    max-width: 70vw;
+
+    max-width: max(280px, calc(100vw - 90px));
+
+    line-height: 1.15;
+    font-size: clamp(15px, 4.103vw, 17px);
   }
 
   .mode-toggle {
     top: calc(14px + env(safe-area-inset-top, 0px));
-    right: calc(14px + env(safe-area-inset-right, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
     transform: none;
   }
 
@@ -289,44 +298,63 @@
   }
 
   .whisper-area {
-    margin-left: 16px;
-    margin-top: 8px;
+    margin: 8px 0 0 12px;
   }
 
-  /* Layout width is larger so the 0.8 scale below lands at the intended
-     visual width (~0.6 of the viewport). */
+  /* Deliberately well inside .archive-description's measure above it, so the
+     field reads as a short answer rather than matching the copy's edge. Same
+     shape of expression as the description (viewport-relative with a floor) so
+     the two shrink at the same rate: at 390px this is 240 against the copy's
+     300, at 320px it floors at 220 against 280. */
   .whisper-input-wrap,
   .whisper-input {
-    width: calc((100vw - 28px) * 0.75);
+    width: max(220px, calc(100vw - 150px));
   }
 
-  /* Keep the real font-size at 16px so iOS Safari doesn't auto-zoom on
-     focus; shrink the whole field (border + text) visually via transform. */
+  /* 16px exactly: iOS Safari auto-zooms a focused input only BELOW 16px, so
+     this is the smallest size that is safe, and it happens to match the
+     description. The old rule set a larger size and then shrank the whole
+     field with transform: scale(0.8) to fake a sub-16px look — that made the
+     layout box 1.25x wider than what you see, which would have overflowed the
+     viewport once the field was widened to the copy's measure (350px of layout
+     box on a 320px phone). Sizing it directly removes the mismatch. */
   .whisper-input {
-    height: 26px;
+    /* SeasonSans' line box at 16px is 19px tall (ascent 15 + descent 4), so the
+       original 28px left 9px of slack — and because the ascent is ~3.7x the
+       descent, most of that read as empty space above the text. 25px leaves 6px.
+       Measured floor: at 20px the j/g descenders touch the dashed border, so
+       don't go below ~22. The 16px font-size is the iOS zoom floor and stays
+       put — only the box changes. */
+    height: 25px;
     font-size: 16px;
   }
 
   .whisper-input-wrap {
-    transform: scale(0.8);
-    transform-origin: top left;
+    transform: none;
   }
 
   /* Floating (center) + landed (bottom) chars are spans, not inputs —
      no zoom concern, so just size them down directly. */
   .whisper-falling-char,
   .whisper-landed-char {
-    font-size: 14px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   .archive-online {
-    top: calc(46px + env(safe-area-inset-top, 0px));
-    right: 16px;
+
+    gap: 4px;
+    position: static;
+    top: auto;
+    right: auto;
   }
 
   .home-btn {
-    font-size: 16px;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    left: calc(14px + env(safe-area-inset-left, 0px));
+    font-size: clamp(19px, 5.128vw, 22px);
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    left: calc(12px + env(safe-area-inset-left, 0px));
+  }
+
+  .archive-description {
+    width: 100%;
   }
 }

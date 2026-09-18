@@ -1,9 +1,18 @@
 /* All font declarations live here so they load at the earliest possible moment */
 
+/* Sans face. size-adjust is calibrated, not decorative: the type scale was
+   tuned against the previous face (PP Telegraf at size-adjust 92%), and
+   SeasonSans has different proportions — measured at 100px it runs 8.4% taller
+   on cap height, 3.8% taller on x-height and 3.9% narrower. 96% matches the
+   x-heights, which is what governs the apparent size of running text, so every
+   tuned font-size keeps the size it was tuned to. Drop this line to get
+   SeasonSans at its natural size (how it rendered before the face was swapped
+   out) — everything sans then grows ~4%. Serif (PPNeueWorld) is unaffected. */
 @font-face {
   font-family: 'SeasonSans';
   src: url('/fonts/SeasonSans-Light.woff2') format('woff2');
   font-weight: 300;
+  size-adjust: 96%;
   font-display: swap;
 }
 
@@ -15,34 +24,85 @@
 }
 
 @font-face {
-  font-family: 'PPEditorialNew';
-  src: url('/fonts/PPEditorialNew-Ultralight.woff2') format('woff2');
-  font-weight: 200;
+  font-family: 'PPNeueWorld';
+  src: url('/fonts/PPNeueWorld-Thin.woff2') format('woff2');
+  font-weight: 100;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'JSoye';
-  src: url('/fonts/JSoye-Light.woff2') format('woff2');
-  font-weight: 300;
-  font-display: swap;
-}
-
-/* Korean overrides — must come after the base declarations */
+/* Korean glyphs render in JSoye Light for BOTH faces (sans + serif), via a
+   unicode-range override on each family name — so any Korean typed/shown uses
+   this font without changing any element's font-family.
+   size-adjust is calibrated against the LATIN face, not against the Korean font
+   that used to sit here. Inheriting SM3 JungGothic's 78%/75% was the mistake:
+   that put JSoye's ink height at 67.7px against a 67.1px Latin cap height — a
+   1.01 ratio — and Korean set to Latin cap height reads SMALLER than the text
+   around it, because a Korean square has no ascender or descender to carry it
+   past the lowercase. Compared 78/88/95/100/108% on mixed strings; 95% is where
+   the two stop fighting, putting Korean ink at 1.23x cap height. Both families
+   land on the same number because their cap heights happen to match (67.1px). */
 @font-face {
   font-family: 'SeasonSans';
   src: url('/fonts/JSoye-Light.woff2') format('woff2');
   font-weight: 300;
+  size-adjust: 95%;
   unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'PPEditorialNew';
+  font-family: 'PPNeueWorld';
   src: url('/fonts/JSoye-Light.woff2') format('woff2');
-  font-weight: 200;
+  font-weight: 100;
+  size-adjust: 95%;
   unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;
   font-display: swap;
+}
+
+/* PPNeueWorld Thin reads too light next to SeasonSans, so every serif element
+   gets a hairline stroke in its OWN color (currentColor — so dark mode, the
+   landing's black<->white cycle layers, and the inline-colored stars each
+   stroke themselves). Listed in one place because these class names repeat
+   across Home/TheRoom/Scribble/Whisper; the stroke is a property of the FACE,
+   not of any one page. Keep in sync if a new serif element is added.
+   Home's background stars (.star) are deliberately left unstroked — they're
+   decorative glyphs, not text, and read better hairline-thin. */
+.access-text,
+.online-text,
+.room-title,
+.create-window-btn,
+.tidy-btn,
+.modal-close,
+.modal-submit,
+.scribble-title,
+.tool-btn,
+.tool-sep,
+.archive-title,
+.online-star,
+.online-label,
+.home-btn,
+.app-page .nav-workspace,
+.app-page .nav-time,
+.app-page .description,
+.app-page .tonight-label,
+.nickname-modal-label {
+  -webkit-text-stroke: 0.3px currentColor;
+  text-stroke: 0.3px currentColor;
+  paint-order: stroke fill;
+}
+
+/* The card labels are the only serif on the site set at body size (16px);
+   everything else above is 22-27px. The colour is identical (#3E3E40) but at
+   16px this face's stems fall under one device pixel and anti-alias to grey,
+   so the labels read pale next to the rest of the serif. A heavier stroke is
+   the fix, not a darker colour — there is no darker colour to go to.
+   0.6px is arithmetic, not taste: the stem at 16px measures ~0.35px, so
+   0.35 + 0.6 = 0.95px, matching the ~0.9px that 27px + 0.3px produces. */
+.window-username,
+.window-time {
+  -webkit-text-stroke: 0.6px currentColor;
+  text-stroke: 0.6px currentColor;
+  paint-order: stroke fill;
 }
 
 * {
@@ -55,13 +115,38 @@ body {
   margin: 0;
   font-family: 'SeasonSans', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 300;
+  /* Sans-serif (SeasonSans) gets a very slight tightening; serif (PPNeueWorld)
+     elements reset this back to normal in their own rules.
+     Halved from -0.02em, which read too tight for the Latin. Note this cannot
+     be split by script: Korean arrives as a unicode-range fallback on the SAME
+     family, and letter-spacing is a property of the element, not of a face — so
+     a mixed string like "Hello, 지은" gets one value for both. Compared
+     -0.02 / -0.015 / -0.01 / -0.005em on Latin and mixed strings; -0.01em is
+     where the Latin opens up while the Korean still holds.
+     Because it is declared once here in em, it resolves against body's 16px and
+     inherits as a fixed -0.16px everywhere — it does NOT scale per element. Set
+     it again on an element if you want it proportional to that element's size. */
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #F3F3F3;
 }
 
+/* Form controls reset letter-spacing to normal (esp. Safari/WebKit), which
+   broke the sans-serif tightening on inputs and their placeholders. Re-inherit
+   the body's value so inputs match — and so the nickname sizer/input widths
+   stay in sync. Serif-font inputs (if any) still opt out in their own rules. */
+input, textarea, button, select {
+  letter-spacing: inherit;
+}
+
 html {
   height: 100%;
+  /* Landing uses rem for its sizes; root stays fixed at 16px so every landing
+     element is a fixed size (27px text = same as Home) and never scales with
+     the window — a smaller window just crops it. Mobile has its own
+     breakpoints. (Home/rooms are px-based, so this doesn't touch them.) */
+  font-size: 16px;
 }
 
 /* Lock scrolling by PINNING the body (position:fixed + inset:0). Unlike

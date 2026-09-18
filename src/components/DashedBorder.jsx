@@ -22,7 +22,7 @@ export function DashedRect({ strokeWidth = 0.8, dash = '4.3 3', rx = 2 }) {
         strokeWidth={strokeWidth}
         strokeDasharray={dash}
         strokeLinecap="round"
-        style={{ stroke: 'var(--dash-color, #000)' }}
+        style={{ stroke: 'var(--dash-color, #3E3E40)' }}
       />
     </svg>
   );
@@ -47,7 +47,7 @@ export function DashedEllipse({ strokeWidth = 0.8, dash = '4.3 3' }) {
         strokeWidth={strokeWidth}
         strokeDasharray={dash}
         strokeLinecap="round"
-        style={{ stroke: 'var(--dash-color, #000)' }}
+        style={{ stroke: 'var(--dash-color, #3E3E40)' }}
       />
     </svg>
   );

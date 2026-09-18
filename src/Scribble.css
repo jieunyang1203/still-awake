@@ -14,36 +14,34 @@
   position: fixed;
   top: 15px;
   left: 24px;
-  right: 60px;
+  /* Right inset must clear the online counter, which is pinned to the viewport
+     edge (right: 24px) and therefore slides left as the window narrows. At
+     right:60px the description ran into it below ~800px wide. The counter is
+     ~120px at 27px type, so 170px keeps the header's right edge permanently to
+     the left of the counter's left edge at every width. */
+  right: 170px;
   display: flex;
   align-items: baseline;
-  gap: 32px;
+  gap: 18px;
   z-index: 50;
   pointer-events: none;
 }
 
 .scribble-title {
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 22px;
-  color: #000;
+  font-size: 27px;
+  color: #3E3E40;
   white-space: nowrap;
 }
 
 .scribble-description {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 200;
-  font-size: 20px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
   line-height: 1.3;
-}
-
-/* The <br> breaks by default (so mobile always wraps); only hidden on wider
-   screens so desktop keeps the description on one line. */
-@media (min-width: 481px) {
-  .desc-break {
-    display: none;
-  }
 }
 
 /* Drawn count — floats above canvas, top-right */
@@ -59,19 +57,21 @@
 }
 
 .online-star {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  font-size: 20px;
-  color: inherit;
+  font-size: 27px;
+  color: #3E3E40;
   line-height: 1;
   flex-shrink: 0;
 }
 
 .online-label {
-  font-family: 'PPEditorialNew', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 200;
-  font-size: 20px;
-  color: #000;
+  font-size: 27px;
+  color: #3E3E40;
 }
 
 .scribble-page.dark-mode .online-star,
@@ -84,10 +84,20 @@
 .scribble-canvas-frame {
   position: absolute;
   top: 110px;
-  bottom: 130px;
+  bottom: 120px;
   left: 90px;
   right: 90px;
-  --dash-color: #000;
+  --dash-color: #3E3E40;
+  /* Same surface treatment as The Room's memo cards (.user-window). The fill is
+     the page colour exactly — what separates a card from the page is not a
+     colour change but this halo, which darkens the ground just around it so the
+     card reads as lifted. Values copied from .user-window so the two surfaces
+     stay identical. */
+  background: #F3F3F3;
+  box-shadow:
+    0 0 6px rgba(180, 180, 182, 0.25),
+    0 0 15px rgba(180, 180, 182, 0.15),
+    0 0 30px rgba(180, 180, 182, 0.08);
 }
 
 .scribble-canvas {
@@ -102,21 +112,82 @@
 /* Toolbar */
 .scribble-toolbar {
   position: fixed;
-  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   right: calc(110px + env(safe-area-inset-right, 0px));
   display: flex;
-  align-items: flex-end;
-  gap: 48px;
+  align-items: flex-start;
+  gap: 56px;
   z-index: 50;
 }
 
-/* Pen group: slider + blobs stacked */
-.scribble-pen-group,
-.scribble-erase-group {
+/* Tools column: "Pen / Brush / Eraser" selector on top, colour blobs below */
+.scribble-tools {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
+}
+
+.tool-selector {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* Selected tool gets a dotted underline; the transparent border on the rest
+   reserves the space so switching tools never shifts the layout. */
+.tool-btn {
+  background: none;
+  border: none;
+  /* Space below the text reserves room for the dotted underline so switching
+     tools never shifts the layout. Small = underline sits tight to the text. */
+  padding: 0 0 2px;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
+  font-weight: 300;
+  font-size: 22px;
+  line-height: 1;
+  color: #3E3E40;
+  cursor: pointer;
+}
+
+/* Dotted underline drawn as a repeating dot row: 2px dots with 1px gaps
+   (3px period). border-bottom:dotted can't control the gap, so we paint it. */
+.tool-btn.active {
+  background-image: radial-gradient(circle at center, currentColor 0.75px, transparent 0.75px);
+  background-size: 3px 2px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+.tool-sep {
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
+  font-weight: 300;
+  font-size: 22px;
+  line-height: 1;
+  color: #3E3E40;
+  user-select: none;
+}
+
+/* Size column: "Size" label + slider */
+/* The "size" label used to be row 1 of this column, level with the tool names,
+   which put the slider on row 2 level with the colour palette. With the label
+   gone the column is just the slider, and the toolbar's align-items:flex-start
+   would pull it up onto the tool-names line. Bottom-aligning the column keeps
+   the slider on the palette's line, where it was. */
+.scribble-size {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: flex-end;
+  gap: 14px;
+}
+
+
+/* Colours don't apply while erasing — dim them as a hint */
+.scribble-colors.is-dimmed {
+  opacity: 0.35;
 }
 
 .scribble-colors {
@@ -125,13 +196,58 @@
   gap: 10px;
 }
 
+/* Size control row: −  |—O—|  + */
+.size-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Matches the slider it sits on, not the body text. The signs used to be full
+   #3E3E40 plus the serif 0.3px stroke while the track and its end ticks are
+   rgba(62,62,64,0.5) — same hue at twice the opacity, so they read noticeably
+   darker than the line they belong to. Dropped from the stroke list too: like
+   the home stars these are symbols, not text. */
+.size-sign {
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
+  font-weight: 300;
+  font-size: 20px;
+  line-height: 1;
+  color: rgba(62, 62, 64, 0.5);
+  user-select: none;
+}
+
+/* Wraps the range input; the pseudo-elements are the short vertical end ticks */
+.slider-track-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 16px;
+}
+
+.slider-track-wrap::before,
+.slider-track-wrap::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 11px;
+  background: rgba(62, 62, 64, 0.5);
+  pointer-events: none;
+}
+
+.slider-track-wrap::before { left: 0; }
+.slider-track-wrap::after { right: 0; }
+
 /* Range slider */
 .scribble-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 207px;
+  width: 130px;
   height: 1px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(62, 62, 64, 0.5);
   outline: none;
   border: none;
   cursor: pointer;
@@ -140,27 +256,23 @@
   margin: 0;
 }
 
-.scribble-slider--erase {
-  width: 80px;
-}
-
 .scribble-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #F3F3F3;
-  border: 1px solid rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(62, 62, 64, 0.7);
   cursor: pointer;
 }
 
 .scribble-slider::-moz-range-thumb {
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #F3F3F3;
-  border: 1px solid rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(62, 62, 64, 0.7);
   cursor: pointer;
   box-sizing: border-box;
 }
@@ -187,31 +299,18 @@
   transform: scale(1.2);
 }
 
-/* Erase button */
-.scribble-erase-btn {
-  background: none;
-  border: none;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
-  font-weight: 300;
-  font-size: 18px;
-  color: #000;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-  display: block;
-}
-
 /* Home button */
 .home-btn {
   position: fixed;
-  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   left: 24px;
   z-index: 50;
   cursor: pointer;
-  font-family: 'SeasonSans', -apple-system, sans-serif;
+  font-family: 'PPNeueWorld', -apple-system, sans-serif;
+  letter-spacing: normal;
   font-weight: 300;
-  font-size: 18px;
-  color: #000;
+  font-size: 22px;
+  color: #3E3E40;
 }
 
 .scribble-page.dark-mode .home-btn {
@@ -231,10 +330,10 @@
 .mode-toggle svg {
   display: block;
   transition: filter 0.3s ease;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 0 3px rgba(62, 62, 64, 0.15));
 }
 
-.mode-toggle svg .sun { stroke: #000; }
+.mode-toggle svg .sun { stroke: #3E3E40; }
 .mode-toggle svg .moon { display: none; }
 
 .mode-toggle svg.dark {
@@ -257,8 +356,35 @@
   color: #F3F3F3;
 }
 
+/* Dark counterpart, matching .light-work-page.dark-mode .user-window */
+.scribble-page.dark-mode .scribble-canvas-frame {
+  background: #3D3D3F;
+  box-shadow:
+    0 0 10px rgba(247, 248, 228, 0.06),
+    0 0 20px rgba(247, 248, 228, 0.045),
+    0 0 35px rgba(247, 248, 228, 0.1);
+}
+
 .scribble-page.dark-mode .scribble-canvas-frame {
   --dash-color: #F3F3F3;
+}
+
+.scribble-page.dark-mode .tool-btn {
+  color: #F3F3F3;
+}
+
+/* 50% to match the dark slider track, same as the light counterpart. */
+.scribble-page.dark-mode .size-sign {
+  color: rgba(243, 243, 243, 0.5);
+}
+
+.scribble-page.dark-mode .slider-track-wrap::before,
+.scribble-page.dark-mode .slider-track-wrap::after {
+  background: rgba(243, 243, 243, 0.5);
+}
+
+.scribble-page.dark-mode .tool-sep {
+  color: #F3F3F3;
 }
 
 .scribble-page.dark-mode .scribble-slider {
@@ -267,27 +393,23 @@
 
 .scribble-page.dark-mode .scribble-slider::-webkit-slider-thumb {
   background: #3D3D3F;
-  border-color: rgba(243, 243, 243, 0.5);
+  border-color: rgba(243, 243, 243, 0.7);
 }
 
 .scribble-page.dark-mode .scribble-slider::-moz-range-thumb {
   background: #3D3D3F;
-  border-color: rgba(243, 243, 243, 0.5);
-}
-
-.scribble-page.dark-mode .scribble-erase-btn {
-  color: #F3F3F3;
+  border-color: rgba(243, 243, 243, 0.7);
 }
 
 
 .scribble-title,
 .scribble-description {
       text-shadow:
-      0 0 6px rgba(255, 255, 255, 1),
-      0 0 15px rgba(255, 255, 255, 1),
-      0 0 30px rgba(255, 255, 255, 0.95),
-      0 0 60px rgba(255, 255, 255, 0.8),
-      0 0 100px rgba(255, 255, 255, 0.5);
+      0 0 6px rgba(243, 243, 243, 1),
+      0 0 15px rgba(243, 243, 243, 1),
+      0 0 30px rgba(243, 243, 243, 0.95),
+      0 0 60px rgba(243, 243, 243, 0.8),
+      0 0 100px rgba(243, 243, 243, 0.5);
 }
 .scribble-page.dark-mode .scribble-title,
 .scribble-page.dark-mode .scribble-description {
@@ -297,100 +419,83 @@
       0 0 35px rgba(160, 160, 165, 0.2);
 }
 
-@media (max-width: 768px) {
-  .scribble-header {
-    gap: 16px;
-    right: 50px;
-  }
-
-  .scribble-title {
-    font-size: 18px;
-  }
-
-  .scribble-description {
-    font-size: 18px;
-  }
-
-  .scribble-toolbar {
-    gap: 28px;
-    right: calc(50px + env(safe-area-inset-right, 0px));
-  }
-
-  .scribble-slider {
-    width: 160px;
-  }
-
-  .scribble-slider--erase {
-    width: 80px;
-  }
-
-  .pen-blob-btn {
-    width: 18px;
-    height: 15px;
-  }
-
-  .scribble-online {
-    right: 16px;
-  }
-
-  .scribble-canvas-frame {
-    top: 120px;
-    bottom: 140px;
-    left: 70px;
-    right: 70px;
-  }
-
-  .home-btn {
-    font-size: 14px;
-    bottom: 20px;
-    left: 16px;
-  }
-
-  /* erase matches the back button size */
-  .scribble-erase-btn {
-    font-size: 14px;
-  }
-}
-
 @media (max-width: 480px) {
+  /* The toolbar had NO mobile override, so it kept the 22px desktop size and
+     ended up LARGER than the 20px page title — the hierarchy was inverted.
+     Drops to the shared action tier. */
+  /* 16px @390 is the size at which this row measures the same width as the
+     colour palette below it: the 8px gaps are fixed, so glyph width per px of
+     font is (142-32)/20 = 5.5, and (120-32)/5.5 = 16. stretch + space-between
+     then pins it to the palette's width exactly instead of relying on the font
+     metrics landing on it. */
+  .tool-btn,
+  .tool-sep {
+    font-size: clamp(15px, 4.103vw, 17px);
+  }
+
+  /* The toolbar is anchored by its bottom, and the palette is the column's last
+     row — so tightening this gap pulls the TEXT down while the palette stays
+     put, which is the intent. */
+  .scribble-tools {
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .tool-selector {
+    justify-content: space-between;
+  }
+
+  .size-sign {
+    font-size: clamp(14px, 3.846vw, 16px);
+  }
+
   .scribble-header {
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 10px;
+    row-gap: 4px;
     top: calc(14px + env(safe-area-inset-top, 0px));
-    left: 16px;
-    right: 44px;
+    left: 12px;
+    right: 12px;
   }
 
   .online-label {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   .online-star {
-    font-size: 15px;
+    font-size: clamp(14px, 3.846vw, 16px);
   }
 
   .scribble-title {
-    font-size: 20px;
+    font-size: clamp(22px, 6.154vw, 26px);
   }
+  /* Measure is capped well short of the right gutter — at full width the room
+     copy's longest line ended 8px off the edge and the three pages were
+     inconsistent (8 / 14 / 33px). At 300px all three sit 76-92px clear and
+     none of them gains a line.
+     The max() floor is not cosmetic: Whisper breaks to three lines at 270px
+     and strands "here." alone on the last one, so on a 360px-wide phone the
+     plain calc() would cross that threshold. 280px is the last width that
+     still holds it to two lines. */
 
   .scribble-description {
-    font-size: 15px;
-    /* Keep clear of the "* NN marks" counter (top-right) so they don't overlap */
-    max-width: calc(100vw - 110px);
+
+    max-width: max(280px, calc(100vw - 90px));
+
+    line-height: 1.15;
+    font-size: clamp(15px, 4.103vw, 17px);
   }
 
   .scribble-toolbar {
     gap: 18px;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    right: calc(20px + env(safe-area-inset-right, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
   }
 
   .scribble-slider {
     width: 120px;
-  }
-
-  .scribble-slider--erase {
-    width: 46px;
   }
 
   .pen-blob-btn {
@@ -398,22 +503,20 @@
     height: 10px;
   }
 
-  /* Match the "erase" text height (13px) so the palette row and the erase
-     button sit on the same line, while the two sliders above also align
-     (both groups become the same total height). */
+  /* Fixed 13px so the palette row and the row beside it stay on one line and
+     the two sliders above line up (both groups end up the same total height).
+     The original note explained this in terms of matching a separate "erase"
+     button's text height — that button no longer exists in the markup, so the
+     number is kept as a measured value rather than a derived one. Re-measure
+     against the toolbar rows if the toolbar type size changes. */
   .scribble-colors {
     gap: 6px;
     height: 13px;
   }
 
-  /* erase matches the back button size on mobile */
-  .scribble-erase-btn {
-    font-size: 16px;
-  }
-
   .mode-toggle {
     top: calc(14px + env(safe-area-inset-top, 0px));
-    right: calc(14px + env(safe-area-inset-right, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
     transform: none;
   }
 
@@ -424,24 +527,31 @@
   }
 
   .scribble-online {
-    top: calc(46px + env(safe-area-inset-top, 0px));
-    right: 16px;
-  }
 
-  .scribble-preview-image {
-    max-width: 85vw;
+    gap: 4px;
+    position: static;
+    top: auto;
+    right: auto;
   }
 
   .scribble-canvas-frame {
-    top: calc(110px + env(safe-area-inset-top, 0px));
-    bottom: calc(170px + env(safe-area-inset-bottom, 0px));
-    left: 16px;
-    right: 16px;
+    /* Follows the header, which is now title 24px + description 16px. Measured
+       header bottom sits at 87px, so this keeps the ~27px of air the layout
+       had before the type scale moved around. Re-measure if either size
+       changes again. */
+    top: calc(114px + env(safe-area-inset-top, 0px));
+    bottom: calc(164px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    right: 12px;
   }
 
   .home-btn {
-    font-size: 16px;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    left: calc(14px + env(safe-area-inset-left, 0px));
+    font-size: clamp(19px, 5.128vw, 22px);
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    left: calc(12px + env(safe-area-inset-left, 0px));
+  }
+
+  .scribble-description {
+    width: 100%;
   }
 }

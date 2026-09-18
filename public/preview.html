@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Still Awake* — mobile preview</title>
+<style>
+  :root{
+    --bg:#16161a; --panel:#1e1e23; --panel2:#25252c; --line:#34343e;
+    --fg:#ececf0; --dim:#8b8b98; --accent:#bddefe;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);
+    font:13px/1.45 ui-sans-serif,-apple-system,"Helvetica Neue",sans-serif;}
+  header{position:sticky;top:0;z-index:20;background:rgba(22,22,26,.96);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;padding:10px 16px;}
+  .bar + .bar{border-top:1px solid var(--line)}
+  /* .bar sets display:flex, which out-specifies the UA's
+     [hidden]{display:none} — so the attribute alone did nothing and the
+     panel stayed on screen while the button claimed it was closed. */
+  [hidden]{display:none !important}
+  h1{font-size:14px;font-weight:600;white-space:nowrap}
+  h1 span{color:var(--dim);font-weight:400;margin-left:8px}
+  .group{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+  .group > label{color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.09em}
+  button,input,select{font:inherit;color:var(--fg);background:var(--panel);
+    border:1px solid var(--line);border-radius:6px;padding:5px 9px}
+  button{cursor:pointer}
+  button:hover{border-color:var(--dim)}
+  button.on{background:var(--accent);color:#10131a;border-color:var(--accent);font-weight:600}
+  input[type=number]{width:64px}
+  input[type=text]{width:96px}
+
+  /* type scale panel */
+  .tiers{display:flex;flex-wrap:wrap;gap:8px}
+  .tier{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:7px 10px;display:flex;flex-direction:column;gap:5px;min-width:150px}
+  .tier .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .tier .name{font-size:11px;font-weight:600;letter-spacing:.02em}
+  .tier .px{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600;font-size:12px}
+  .tier .px small{color:var(--dim);font-weight:400;margin-left:4px}
+  .tier .what{color:var(--dim);font-size:10px;line-height:1.3}
+  .tier input[type=range]{width:100%;accent-color:var(--accent);padding:0;border:0;background:none}
+  pre{margin:0 16px 20px;padding:12px 14px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:8px;overflow-x:auto;
+    font:12px/1.6 ui-monospace,Menlo,monospace;color:#d7e6f5;white-space:pre}
+
+  .strip{display:flex;gap:18px;align-items:flex-start;padding:18px 16px 44px;overflow-x:auto}
+  figure{flex:0 0 auto;display:flex;flex-direction:column;gap:7px}
+  figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    color:var(--dim);font-size:11px;padding:0 2px}
+  figcaption b{color:var(--fg);font-size:12px;font-weight:600}
+  .phone{border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+  iframe{display:block;border:0;background:#fff}
+  .hint{padding:0 16px 32px;color:var(--dim);max-width:860px}
+  .hint code{background:var(--panel);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>Still Awake* <span>mobile preview</span></h1>
+    <div class="group"><label>width</label><span id="widths"></span>
+      <input type="number" id="wCustom" min="280" max="900"></div>
+    <div class="group"><label>height</label>
+      <input type="number" id="hInput" min="400" max="1400" value="844"></div>
+    <div class="group"><label>theme</label>
+      <button id="light" class="on">light</button><button id="dark">dark</button></div>
+    <div class="group"><label>nickname</label><input type="text" id="nick" value="yeun"></div>
+    <div class="group"><button id="reload">↻ reload</button>
+      <button id="toggleType" aria-expanded="false" title="타이포 스케일 여닫기">type scale ▸</button></div>
+  </div>
+
+  <div class="bar" id="typeBar">
+    <div class="tiers" id="tiers"></div>
+    <div class="group" style="flex-direction:column;align-items:stretch;gap:6px">
+      <button id="resetType">↺ reset to code</button>
+      <button id="showCss">&lt;/&gt; show CSS</button>
+    </div>
+  </div>
+</header>
+
+<pre id="cssOut" hidden></pre>
+<div class="strip" id="strip"></div>
+
+<p class="hint">
+  Each frame is a real iframe at the chosen width, so every
+  <code>@media</code> query and <code>vw</code>/<code>dvh</code> unit resolves against the
+  <em>frame</em> — not this window. A slider you move injects <code>font-size … !important</code> into each frame live;
+  tiers you leave alone keep whatever the stylesheet says (including fluid
+  <code>clamp()</code> sizes). Nothing on disk changes until you take the generated CSS.
+  Sliders always start at the values in the CSS, so <em>(was NN)</em> means you moved it.
+</p>
+
+<script>
+/* ---- tiers: name, current value in the codebase, range, selectors ---- */
+var TIERS = [
+  { key:'t1',    name:'T1 · page title',  def:24, min:14, max:44,
+    what:'room / archive / scribble title',
+    sel:'.room-title,.archive-title,.scribble-title' },
+  { key:'t1b',   name:'T1b · home',       def:20, min:14, max:40,
+    what:'home greeting + nav ovals',
+    sel:'.home-greeting,.box-text' },
+  { key:'t2',    name:'T2 · description',  def:16, min:11, max:32,
+    what:'the line under each page title',
+    sel:'.room-description,.archive-description,.scribble-description' },
+  { key:'t2b',   name:'T2b · action',      def:20, min:11, max:32,
+    what:'back, + share, toolbar + the home clock line — landing size',
+    sel:'.access-text,.home-btn,.create-window-btn,.tool-btn,.tool-sep,.size-label' },
+  { key:'t3',    name:'T3 · meta + card',  def:15, min:10, max:28,
+    what:'online count, card text, falling letters',
+    sel:'.online-label,.online-star,.online-text,.window-text,.card-x,.size-sign,'
+       +'.whisper-falling-char,.whisper-landed-char' },
+  { key:'t4',    name:'T4 · card meta',    def:15, min:9,  max:24,
+    what:'card username, edit',
+    sel:'.window-username,.card-edit' },
+  { key:'tidy',  name:'tidy button',       def:16, min:10, max:26,
+    what:'one step under the other actions, as on desktop',
+    sel:'.tidy-btn' },
+  { key:'star',  name:'home stars',        def:34, min:12, max:56,
+    what:'decorative — beats the inline 34px',
+    sel:'.star' },
+  { key:'land',  name:'landing chrome',    def:20, min:12, max:34,
+    what:'its own flat system — all four are peers',
+    sel:'.app-page .description,.app-page .nav-workspace,.app-page .nav-time,.app-page .tonight-label' }
+];
+
+var PAGES = [
+  ['', 'Landing', 'clock, cropped left'],
+  ['#/home', 'Home', 'lobby / nav'],
+  ['#/the-room', 'The Room', 'memo cards'],
+  ['#/whisper', 'Whisper..', 'falling letters'],
+  ['#/scribble', 'Scribble', 'shared canvas']
+];
+var PRESETS = [375, 390, 414, 430];
+
+var strip = document.getElementById('strip');
+var state = { w: 390, h: 844 };
+var scale = {};
+
+function store(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+function read(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+
+/* Always start from the values that are actually in the CSS. Persisting these
+   across reloads was a trap: a stale stored size silently shadowed the real
+   default, so the preview showed 20px where the codebase says 24px — i.e. it
+   lied about the thing it exists to show. The "(was NN)" badge is therefore a
+   reliable signal that YOU moved a slider in this session. */
+TIERS.forEach(function(t){ scale[t.key] = t.def; });
+try{ Object.keys(localStorage).filter(function(k){ return k.indexOf('pv-') === 0; })
+       .forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
+
+/* Only emit a rule for a tier the slider actually moved. Emitting all of them
+   meant the panel's `font-size: Npx !important` masked whatever the CSS really
+   said — once the real sizes became clamp(), every frame still rendered the
+   frozen px value and the preview stopped showing the truth. Untouched tiers
+   now fall through to the stylesheet, so fluid sizes behave normally. */
+function css(){
+  return TIERS.filter(function(t){ return scale[t.key] !== t.def; })
+    .map(function(t){
+      return t.sel.split(',').join(',\n') + ' {\n  font-size: ' + scale[t.key] + 'px !important;\n}';
+    }).join('\n\n');
+}
+
+function applyTo(frame){
+  try{
+    var d = frame.contentDocument;
+    if(!d || !d.head) return;
+    var st = d.getElementById('pv-scale');
+    if(!st){ st = d.createElement('style'); st.id = 'pv-scale'; d.head.appendChild(st); }
+    st.textContent = css();
+  }catch(e){}
+}
+function applyAll(){
+  [].forEach.call(strip.querySelectorAll('iframe'), applyTo);
+  var out = document.getElementById('cssOut');
+  if(!out.hidden) out.textContent = '/* @media (max-width: 480px) */\n\n' + css();
+}
+
+function build(){
+  strip.innerHTML = '';
+  PAGES.forEach(function(p){
+    var fig = document.createElement('figure');
+    var cap = document.createElement('figcaption');
+    cap.innerHTML = '<b></b><span></span>';
+    cap.querySelector('b').textContent = p[1];
+    cap.querySelector('span').textContent = p[2];
+    var shell = document.createElement('div');
+    shell.className = 'phone';
+    shell.style.width = state.w + 'px';
+    var f = document.createElement('iframe');
+    f.style.width = state.w + 'px';
+    f.style.height = state.h + 'px';
+    f.addEventListener('load', function(){ applyTo(f); setTimeout(function(){ applyTo(f); }, 600); });
+    f.src = '/?pv=' + Date.now() + (p[0] || '#/');
+    shell.appendChild(f);
+    fig.appendChild(cap); fig.appendChild(shell);
+    strip.appendChild(fig);
+  });
+}
+
+/* ---- tier controls ---- */
+var tiersEl = document.getElementById('tiers');
+TIERS.forEach(function(t){
+  var box = document.createElement('div'); box.className = 'tier';
+  var top = document.createElement('div'); top.className = 'top';
+  var nm = document.createElement('span'); nm.className = 'name'; nm.textContent = t.name;
+  var px = document.createElement('span'); px.className = 'px';
+  top.appendChild(nm); top.appendChild(px);
+  var what = document.createElement('div'); what.className = 'what'; what.textContent = t.what;
+  var rng = document.createElement('input');
+  rng.type = 'range'; rng.min = t.min; rng.max = t.max; rng.step = 1;
+  function paint(){
+    px.innerHTML = scale[t.key] + 'px' +
+      (scale[t.key] === t.def ? '' : ' <small>(was ' + t.def + ')</small>');
+  }
+  rng.oninput = function(){
+    scale[t.key] = Number(rng.value);
+    paint(); applyAll();
+  };
+  t._sync = function(){ rng.value = scale[t.key]; paint(); };
+  t._sync();
+  box.appendChild(top); box.appendChild(what); box.appendChild(rng);
+  tiersEl.appendChild(box);
+});
+
+/* ---- width / height / theme / nickname ---- */
+var wrap = document.getElementById('widths');
+PRESETS.forEach(function(w){
+  var b = document.createElement('button');
+  b.textContent = w; b.dataset.w = w;
+  b.onclick = function(){ state.w = w; syncW(); build(); };
+  wrap.appendChild(b);
+});
+function syncW(){
+  [].forEach.call(wrap.querySelectorAll('button'), function(b){
+    b.classList.toggle('on', Number(b.dataset.w) === state.w);
+  });
+  document.getElementById('wCustom').value = state.w;
+}
+document.getElementById('wCustom').oninput = function(e){
+  var v = Number(e.target.value);
+  if(v >= 280 && v <= 900){ state.w = v; syncW(); build(); }
+};
+document.getElementById('hInput').oninput = function(e){
+  var v = Number(e.target.value);
+  if(v >= 400 && v <= 1400){ state.h = v; build(); }
+};
+document.getElementById('reload').onclick = build;
+
+var lightBtn = document.getElementById('light'), darkBtn = document.getElementById('dark');
+function setTheme(isDark){
+  store('darkMode', isDark ? 'true' : 'false');
+  lightBtn.classList.toggle('on', !isDark);
+  darkBtn.classList.toggle('on', isDark);
+  build();
+}
+lightBtn.onclick = function(){ setTheme(false); };
+darkBtn.onclick  = function(){ setTheme(true);  };
+
+var nick = document.getElementById('nick');
+nick.oninput = function(){ store('nickname', nick.value.trim()); };
+
+document.getElementById('resetType').onclick = function(){
+  TIERS.forEach(function(t){ scale[t.key] = t.def; t._sync(); });
+  applyAll();
+};
+var typeBar = document.getElementById('typeBar'), tBtn = document.getElementById('toggleType');
+function setTypePanel(open){
+  typeBar.hidden = !open;
+  tBtn.classList.toggle('on', open);
+  tBtn.textContent = open ? 'type scale ▾' : 'type scale ▸';
+  tBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+tBtn.onclick = function(){ setTypePanel(typeBar.hidden); };
+/* Starts closed: the sliders are ~256px tall, which pushed the phone frames far
+   enough down that a full 844px screen no longer fit on a laptop display. The
+   frames are the point of this page; the panel is occasional. */
+setTypePanel(false);
+var out = document.getElementById('cssOut'), cBtn = document.getElementById('showCss');
+cBtn.onclick = function(){
+  out.hidden = !out.hidden;
+  cBtn.classList.toggle('on', !out.hidden);
+  if(!out.hidden){
+    out.textContent = '/* @media (max-width: 480px) */\n\n' + css();
+    if(navigator.clipboard) navigator.clipboard.writeText(css()).catch(function(){});
+  }
+};
+
+store('nickname', nick.value.trim());
+if(read('darkMode') === null) store('darkMode', 'false');
+if(read('darkMode') === 'true'){ lightBtn.classList.remove('on'); darkBtn.classList.add('on'); }
+syncW();
+build();
+</script>
+</body>
+</html>

@@ -175,9 +175,9 @@ function Home() {
               position: 'absolute',
               top: `${starStates[index]?.top || 10}%`,
               left: `${starStates[index]?.left || 50}%`,
-              fontSize: '25px',
-              fontFamily: 'PPEditorialNew',
-              color: isDarkMode ? '#F3F3F3' : 'black',
+              fontSize: '34px',
+              fontFamily: 'PPNeueWorld',
+              color: isDarkMode ? '#F3F3F3' : '#3E3E40',
               opacity: starStates[index]?.opacity || 0,
               pointerEvents: 'none',
               userSelect: 'none',
@@ -191,13 +191,15 @@ function Home() {
 
         <div className="top-content">
           <p className="access-text">
-            <span className="access-restricted">Access restricted to 1:00 AM - 5:00 AM.&nbsp;&nbsp;</span>Current time: [{formatTime(currentTime)}].{timeUntilOpen !== 'Open now' && ` Hours until opening: [${timeUntilOpen}]`}
+            <span className="access-restricted">Access restricted to 1:00 AM - 5:00 AM.&nbsp;&nbsp;</span>
+            <span className="access-now">Current time: [{formatTime(currentTime)}].</span>
+            {timeUntilOpen !== 'Open now' && <>{' '}<span className="access-until">Hours until opening: [{timeUntilOpen}]</span></>}
           </p>
           {nickname && (
             <span className="home-greeting">Hello, {nickname}</span>
           )}
         </div>
-        {/* 여기에 나중에 콘텐츠 추가 */}
+        {/* content to be added here later */}
         <div className="house-container">
           <img src={houseSvg} alt="House" className="house-icon" />
           {/* Mobile-only inline SVG — drawn to fit container, no distortion */}
@@ -215,7 +217,7 @@ function Home() {
             <line x1="20.5" y1="595" x2="372.5" y2="595" strokeWidth="0.75" vectorEffect="non-scaling-stroke"/>
           </svg>
           <div className="house-online-count">
-            <span className="online-text">({onlineCount} online)</span>
+            <span className="online-text">({String(onlineCount).padStart(2, '0')} online)</span>
           </div>
           <div className="dashed-boxes">
             <div className="dashed-box dashed-box-top" onClick={() => navigate('/the-room')}>
