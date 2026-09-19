@@ -394,7 +394,12 @@
   .nickname-modal-input {
     font-family: 'SeasonSans', -apple-system, sans-serif;
     font-weight: 300;
-    font-size: 20px;
+    /* A step under the serif label above it, which is 20px. Measured at a
+       matched 20px the two have the same ink height (15.26 vs 15.16px) but the
+       sans runs ~6% wider per character with heavier stems, so it read as the
+       larger of the two. 18px lands just under the width match, which offsets
+       the stem weight. Still >= 16px, so iOS does not zoom on focus. */
+    font-size: 18px;
     text-align: center;
     color: #888;
     background: transparent;

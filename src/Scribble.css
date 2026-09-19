@@ -209,10 +209,14 @@
    darker than the line they belong to. Dropped from the stroke list too: like
    the home stars these are symbols, not text. */
 .size-sign {
-  font-family: 'PPNeueWorld', -apple-system, sans-serif;
-  letter-spacing: normal;
+  /* Sans, not the site's serif. These are single glyphs and PPNeueWorld is far
+     too narrow for them: measured at 22px its minus sign came out SEVEN pixels
+     wide and a hairline thick, which on a phone was effectively invisible —
+     raising the size alone did nothing. The sans gives the glyph real width.
+     The 0.5 alpha stays; it is matched to the slider track it labels. */
+  font-family: 'SeasonSans', -apple-system, sans-serif;
   font-weight: 300;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   color: rgba(62, 62, 64, 0.5);
   user-select: none;
@@ -446,7 +450,7 @@
   }
 
   .size-sign {
-    font-size: clamp(14px, 3.846vw, 16px);
+    font-size: 17px;
   }
 
   .scribble-header {

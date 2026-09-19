@@ -120,6 +120,7 @@ function TheRoom() {
 
   const scaleRef = useRef(1);
   const canvasInnerRef = useRef(null);
+  const pageRef = useRef(null);
 
   useEffect(() => {
     const MIN_SCALE = 0.62;
@@ -148,6 +149,39 @@ function TheRoom() {
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
+
+  // The mobile canvas starts directly below the header. Measuring the header
+  // instead of hard-coding a height means the cards sit just under the real
+  // text on every phone width — the fixed 119px was sized for the tallest the
+  // header ever gets, so at the usual height it stranded blank space above the
+  // first card and stopped a card dragged to the top well short of the header.
+  // Re-measured on resize and whenever the description can reflow.
+  useEffect(() => {
+    const GAP = 8; // breathing room between the copy and the first card
+    const measure = () => {
+      const header = document.querySelector('.room-header');
+      if (!header || !pageRef.current) return;
+      const bottom = header.getBoundingClientRect().bottom;
+      pageRef.current.style.setProperty('--room-canvas-top', `${Math.round(bottom + GAP)}px`);
+    };
+    // Run the first measurement synchronously, NOT inside requestAnimationFrame:
+    // rAF does not fire in a backgrounded tab, which left the variable unset and
+    // the canvas stuck on its fallback. Only the resize handler is throttled.
+    measure();
+    let raf = null;
+    const onResize = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = null; measure(); });
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+    // The header's height depends on where the description wraps, which can
+    // change once the webfont swaps in.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure).catch(() => {});
+    return () => {
+      window.removeEventListener('resize', onResize);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [isMobile, onlineCount]);
 
   useEffect(() => {
     localStorage.setItem('darkMode', isDarkMode);
@@ -416,7 +450,7 @@ function TheRoom() {
     : undefined;
 
   return (
-    <div className={`light-work-page ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div className={`light-work-page ${isDarkMode ? 'dark-mode' : ''}`} ref={pageRef}>
       <FilmGrain intensityScale={0.5} />
 
       <div className="room-header">

@@ -43,9 +43,14 @@ function App() {
     };
     window.addEventListener('resize', handleResize, { passive: true });
 
-    import('p5').then(async ({ default: p5 }) => {
-      if (cancelled || !sketchRef.current) return;
-      try { await document.fonts.load('1em Dotline'); } catch(e) {}
+    // Both of these were already started at boot (see main.jsx), so they
+    // usually resolve from cache here. Awaiting them together rather than in
+    // sequence matters on a cold load: the Dotline request used to be issued
+    // only after p5 had finished arriving.
+    Promise.all([
+      import('p5'),
+      document.fonts.load('1em Dotline').catch(() => {}),
+    ]).then(async ([{ default: p5 }]) => {
       if (cancelled || !sketchRef.current) return;
       const sketch = (p) => {
       let targetAngle = 30;

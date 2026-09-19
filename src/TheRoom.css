@@ -838,7 +838,13 @@
      overscroll-behavior stops a flick at either end from scrolling the page
      behind it. */
   .room-canvas {
-    top: 119px;
+    /* Measured from the header at runtime (see TheRoom.jsx) rather than
+       guessed. The old hard-coded 119px was set for the tallest the header
+       gets; at the real height it left ~18px of dead space above the first
+       card, and a card dragged to the top of the canvas stopped there instead
+       of under the header. The fallback only applies before the first
+       measurement. */
+    top: var(--room-canvas-top, 119px);
     bottom: 44px;
     overflow-y: auto;
     overflow-x: hidden;

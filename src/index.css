@@ -47,7 +47,12 @@
   font-weight: 300;
   size-adjust: 95%;
   unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;
-  font-display: swap;
+  /* block, not swap: the Korean face is 333K and with swap the page painted
+     a system gothic first and visibly re-flowed to JSoye a moment later. block
+     keeps the text invisible for a short period instead, and main.jsx starts
+     the download at boot on every page that shows Korean, so that period is
+     normally over before anything paints. */
+  font-display: block;
 }
 
 @font-face {
@@ -56,7 +61,12 @@
   font-weight: 100;
   size-adjust: 95%;
   unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7A3, U+D7B0-D7FF;
-  font-display: swap;
+  /* block, not swap: the Korean face is 333K and with swap the page painted
+     a system gothic first and visibly re-flowed to JSoye a moment later. block
+     keeps the text invisible for a short period instead, and main.jsx starts
+     the download at boot on every page that shows Korean, so that period is
+     normally over before anything paints. */
+  font-display: block;
 }
 
 /* PPNeueWorld Thin reads too light next to SeasonSans, so every serif element
@@ -70,6 +80,8 @@
 .access-text,
 .online-text,
 .room-title,
+.window-username,
+.window-time,
 .create-window-btn,
 .tidy-btn,
 .modal-close,
@@ -88,20 +100,6 @@
 .nickname-modal-label {
   -webkit-text-stroke: 0.3px currentColor;
   text-stroke: 0.3px currentColor;
-  paint-order: stroke fill;
-}
-
-/* The card labels are the only serif on the site set at body size (16px);
-   everything else above is 22-27px. The colour is identical (#3E3E40) but at
-   16px this face's stems fall under one device pixel and anti-alias to grey,
-   so the labels read pale next to the rest of the serif. A heavier stroke is
-   the fix, not a darker colour — there is no darker colour to go to.
-   0.6px is arithmetic, not taste: the stem at 16px measures ~0.35px, so
-   0.35 + 0.6 = 0.95px, matching the ~0.9px that 27px + 0.3px produces. */
-.window-username,
-.window-time {
-  -webkit-text-stroke: 0.6px currentColor;
-  text-stroke: 0.6px currentColor;
   paint-order: stroke fill;
 }
 
