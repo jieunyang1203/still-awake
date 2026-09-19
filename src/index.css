@@ -18,7 +18,7 @@
 
 @font-face {
   font-family: 'Dotline';
-  src: url('./fonts/Dotline-LA7g.woff2') format('woff2');
+  src: url('/fonts/Dotline-LA7g.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
 }

@@ -6,6 +6,11 @@
   <title>Still Awake*</title>
   <link rel="preload" as="font" href="/fonts/SeasonSans-Light.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/fonts/PPNeueWorld-Thin.woff2" type="font/woff2" crossorigin>
+  <!-- The landing clock cannot draw its numerals until this face is ready, and
+       a document.fonts.load() call is a low-priority request: on a cold load it
+       queued behind p5's 1MB and took 5s to arrive for an 8KB file. A preload
+       link fetches it at top priority, before p5 is even requested. -->
+  <link rel="preload" as="font" href="/fonts/Dotline-LA7g.woff2" type="font/woff2" crossorigin>
 </head>
 <body>
   <div id="root"></div>
