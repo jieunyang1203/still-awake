@@ -199,12 +199,20 @@
     font-size: 1.5rem;
     font-family: 'SeasonSans', -apple-system, sans-serif;
     font-weight: 300;
-    color: #4D4D4D;
-    animation: nickname-tint 33s linear infinite;
+    /* Start values only; the keyframes above own both from the first frame. */
+    color: rgb(62, 62, 64);
+    opacity: 0.88;
+    animation:
+      nickname-tint 33s linear infinite,
+      nickname-veil 33s linear infinite;
+    /* Half the glow the serif label beside it carries, and no third stop. The
+       halo adds apparent mass, and this is the one place on the landing where
+       it sits on the SANS at weight 300 rather than the thin serif at 200 — the
+       same glow that reads as a soft knockout on the label read as extra weight
+       here. Enough is kept to hold the text off the clock behind it. */
     text-shadow:
-      0 0 4px rgba(243,243,243,0.9),
-      0 0 12px rgba(243,243,243,0.5),
-      0 0 24px rgba(243,243,243,0.25);
+      0 0 4px rgba(243,243,243,0.45),
+      0 0 10px rgba(243,243,243,0.22);
     background: transparent;
     border: none;
     border-bottom: none;
@@ -278,17 +286,52 @@
     100% { opacity: 0; }
   }
 
-  /* Nickname text cycles black<->white on the SAME schedule as the base/white
-     text layers (same %s and easing as text-white-fade). Because the input
-     mounts late (on click), App sets a negative animation-delay inline so this
-     stays in phase with the always-running background/text layers. */
+  /* The nickname is an <input>, so it cannot be duplicated into the base/white
+     layer pair every other line on this page uses. It has to reproduce that
+     pair's result with one element — and the pair does TWO things at once:
+     it shifts colour AND it goes genuinely translucent. Two layers at 0.5/0.5
+     cover a glyph pixel to only 1-(1-.5)(1-.5) = 0.75, so mid-transition the
+     surrounding text thins out and the clock shows through it. Matching just
+     the colour left the nickname solid while everything around it was
+     dissolving, which is what read as "off".
+     So both properties are animated, derived from the layer opacities measured
+     on the real page:
+        effective alpha = 1 - (1-a)(1-b)          (dips to ~0.75)
+        effective colour = (C1.a.(1-b) + C2.b) / effective alpha
+     with a = base-layer opacity, b = 1-a, C1 #3E3E40, C2 #F3F3F3.
+     The whole thing is then scaled by 0.88 so the nickname sits a little
+     lighter than the surrounding text at every point — move that one factor to
+     change how much lighter, and re-derive with the same two formulas.
+     Phase is not set here: App copies the running layer animation's currentTime
+     onto BOTH of these, because the input mounts long after they started. */
   @keyframes nickname-tint {
-    0%   { color: #4D4D4D; }
-    20%  { color: #4D4D4D; animation-timing-function: ease-in; }
-    33%  { color: #F3F3F3; animation-timing-function: linear; }
-    67%  { color: #F3F3F3; animation-timing-function: ease-out; }
-    80%  { color: #4D4D4D; }
-    100% { color: #4D4D4D; }
+    0%    { color: rgb(62, 62, 64); }
+    20%   { color: rgb(62, 62, 64); }
+    24%   { color: rgb(90, 90, 92); }
+    26.5% { color: rgb(134, 134, 136); }
+    29%   { color: rgb(193, 193, 195); }
+    33%   { color: rgb(243, 243, 243); }
+    67%   { color: rgb(243, 243, 243); }
+    70%   { color: rgb(214, 214, 216); }
+    73.5% { color: rgb(135, 135, 137); }
+    76%   { color: rgb(90, 90, 92); }
+    80%   { color: rgb(62, 62, 64); }
+    100%  { color: rgb(62, 62, 64); }
+  }
+
+  @keyframes nickname-veil {
+    0%    { opacity: 0.88; }
+    20%   { opacity: 0.88; }
+    24%   { opacity: 0.777; }
+    26.5% { opacity: 0.69; }
+    29%   { opacity: 0.662; }
+    33%   { opacity: 0.88; }
+    67%   { opacity: 0.88; }
+    70%   { opacity: 0.679; }
+    73.5% { opacity: 0.689; }
+    76%   { opacity: 0.777; }
+    80%   { opacity: 0.88; }
+    100%  { opacity: 0.88; }
   }
 
   .text-white-layer {

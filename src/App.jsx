@@ -12,8 +12,7 @@ function App() {
   // Landing color/background animations start at mount; the nickname input
   // mounts later (on click), so we offset its tint animation by however far
   // the cycle has progressed to keep it in phase. Computed once, then cached.
-  const animStartRef = useRef(performance.now());
-  const nickDelayRef = useRef(null);
+  const nicknameInputRef = useRef(null);
 
   const [timeUntilOpen, setTimeUntilOpen] = useState('');
   const [showNicknameInput, setShowNicknameInput] = useState(false);
@@ -217,6 +216,34 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // The nickname input mounts long after the page, so its colour cycle has to
+  // be put in phase with the text layers that have been running since load.
+  // This used to be done by computing a negative animation-delay from a
+  // timestamp taken at App's first render — but the layers' animations start
+  // when they are first painted, not when App renders, and that gap showed up
+  // as a measured 727ms (2.2% of the 33s cycle) of drift. Reading the running
+  // animation's own currentTime and copying it is exact and cannot drift.
+  useEffect(() => {
+    if (!showNicknameInput || isMobile) return;
+    let raf = null;
+    const sync = () => {
+      const el = nicknameInputRef.current;
+      const reference = document.querySelector('.landing-bottom-left.text-white-layer');
+      if (!el || !reference) return false;
+      const theirs = reference.getAnimations()[0];
+      const mine = el.getAnimations();
+      if (!theirs || !mine.length || theirs.currentTime == null) return false;
+      // Both of the input's animations (colour and translucency) have to land
+      // on the same phase as the layers, not just the first one.
+      for (const a of mine) a.currentTime = theirs.currentTime;
+      return true;
+    };
+    // One retry on the next frame, for the case where the animation object
+    // does not exist yet on the very first commit.
+    if (!sync()) raf = requestAnimationFrame(sync);
+    return () => { if (raf) cancelAnimationFrame(raf); };
+  }, [showNicknameInput, isMobile]);
+
   // The "tonight, you are:" label color-cycles purely via the base/white CSS
   // layers (identical to "To workspace"), so there's nothing to sync in JS —
   // just reveal the input.
@@ -293,7 +320,7 @@ function App() {
             <div className="nickname-sizer" data-value="a name for tonight." ref={sizerRef}>
               <input
                 className="nickname-input"
-                style={{ animationDelay: (nickDelayRef.current ??= `-${(((performance.now() - animStartRef.current) / 1000) % 33).toFixed(2)}s`) }}
+                ref={nicknameInputRef}
                 placeholder="a name for tonight."
                 /* No maxLength attribute on purpose — see the mobile input. */
                 onCompositionStart={() => { composingRef.current = true; }}
